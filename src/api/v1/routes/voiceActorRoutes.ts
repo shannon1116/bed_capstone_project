@@ -3,7 +3,7 @@ import * as voiceActorController from "../controllers/voiceActorController";
 
 const router: Router = express.Router();
 
-// "/api/v1/songs" prefixes all below routes
+// "/api/v1/voiceActors" prefixes all below routes
 router.post("/", voiceActorController.createVoiceActor);
 router.get("/", voiceActorController.getAllVoiceActors);
 router.get("/:id", voiceActorController.getOneVoiceActor);

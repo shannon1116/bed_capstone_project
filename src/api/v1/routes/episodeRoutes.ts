@@ -3,7 +3,7 @@ import * as episodeController from "../controllers/episodeController";
 
 const router: Router = express.Router();
 
-// "/api/v1/songs" prefixes all below routes
+// "/api/v1/episodes" prefixes all below routes
 router.post("/", episodeController.createEpisode);
 router.get("/", episodeController.getAllEpisodes);
 router.get("/:id", episodeController.getOneEpisode);
