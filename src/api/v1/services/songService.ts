@@ -17,7 +17,7 @@ import {
 
 const songs: Song[] = [];
 
-const COLLECTION: string = "hazbinHotelSongs";
+const COLLECTION: string = "HazbinHotelSongs";
 
 /**
  * Retrieves all songs from services
