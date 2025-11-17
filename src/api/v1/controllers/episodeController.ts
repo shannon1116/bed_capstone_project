@@ -2,19 +2,19 @@ import { Request, Response, NextFunction } from "express";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
 
 /**
- * Manages requests and reponses to retrieve all Songs
+ * Manages requests and reponses to retrieve all Episodes
  * @param req - The express Request
  * @param res  - The express Response
  * @param next - The express middleware chaining function
  */
-export const getAllSongs = async (
+export const getAllEpisodes = async (
     req: Request,
     res: Response,
     next: NextFunction
 ): Promise<void> => {
     try {
         res.status(HTTP_STATUS.OK).json({
-            message: "Songs retrieved successfully",
+            message: "Episodes retrieved successfully",
         });
     } catch (error: unknown) {
         next(error);
@@ -22,19 +22,19 @@ export const getAllSongs = async (
 };
 
 /**
- * Manages requests and reponses to retrieve a Song
+ * Manages requests and reponses to retrieve one Episode
  * @param req - The express Request
  * @param res  - The express Response
  * @param next - The express middleware chaining function
  */
-export const getOneSong = async (
+export const getOneEpisode = async (
     req: Request,
     res: Response,
     next: NextFunction
 ): Promise<void> => {
     try {
         res.status(HTTP_STATUS.OK).json({
-            message: "Song retrieved successfully",
+            message: "Episode retrieved successfully",
         });
     } catch (error: unknown) {
         next(error);
@@ -42,19 +42,19 @@ export const getOneSong = async (
 };
 
 /**
- * Manages requests, reponses, and validation to create a Song
+ * Manages requests, reponses, and validation to create a Episode
  * @param req - The express Request
  * @param res  - The express Response
  * @param next - The express middleware chaining function
  */
-export const createSong = async (
+export const createEpisode = async (
     req: Request,
     res: Response,
     next: NextFunction
 ): Promise<void> => {
     try {
         res.status(HTTP_STATUS.CREATED).json({
-            message: "Song created successfully",
+            message: "Episode created successfully",
         });
     } catch (error: unknown) {
         next(error);
@@ -62,19 +62,19 @@ export const createSong = async (
 };
 
 /**
- * Manages requests and reponses to update a Song
+ * Manages requests and reponses to update a Episode
  * @param req - The express Request
  * @param res  - The express Response
  * @param next - The express middleware chaining function
  */
-export const updateSong = async (
+export const updateEpisode = async (
     req: Request,
     res: Response,
     next: NextFunction
 ): Promise<void> => {
     try {
         res.status(HTTP_STATUS.OK).json({
-            message: "Song updated successfully",
+            message: "Episode updated successfully",
         });
     } catch (error: unknown) {
         next(error);
@@ -82,19 +82,19 @@ export const updateSong = async (
 };
 
 /**
- * Manages requests and reponses to delete a Song
+ * Manages requests and reponses to delete a Episode
  * @param req - The express Request
  * @param res  - The express Response
  * @param next - The express middleware chaining function
  */
-export const deleteSong = async (
+export const deleteEpisode = async (
     req: Request,
     res: Response,
     next: NextFunction
 ): Promise<void> => {
     try {
         res.status(HTTP_STATUS.OK).json({
-            message: "Song successfully deleted",
+            message: "Episode successfully deleted",
         });
     } catch (error: unknown) {
         next(error);
