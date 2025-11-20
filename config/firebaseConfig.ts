@@ -2,7 +2,7 @@ import { initializeApp, cert, ServiceAccount } from "firebase-admin/app";
 import { getFirestore, Firestore } from "firebase-admin/firestore";
 import { getAuth, Auth } from "firebase-admin/auth";
 
-// You'll n eed to replace this with your actual service account file name
+// You'll need to replace this with your actual service account file name
 import serviceAccount from "../capstone_project_key.json";
 
 // initialize the Firebase app with our service account key
