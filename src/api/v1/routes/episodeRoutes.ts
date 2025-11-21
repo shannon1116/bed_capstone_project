@@ -131,7 +131,7 @@ router.get("/:id", episodeController.getOneEpisode);
  * /episodes/{episodeId}:
  *   put:
  *     summary: Update a specific episode's information
- *     tags: [Songs]
+ *     tags: [Episodes]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -163,7 +163,7 @@ router.put("/:id", episodeController.updateEpisode);
 
 /**
  * @openapi
- * /episode/{episodeId}:
+ * /episodes/{episodeId}:
  *   delete:
  *     summary: Deletes a specific episode
  *     tags: [Episodes]
