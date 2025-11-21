@@ -1,5 +1,8 @@
 // import the express application and type definition
 import express, { Express } from "express";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 import songRoutes from "./api/v1/routes/songRoutes";
 import episodeRoutes from "./api/v1/routes/episodeRoutes";

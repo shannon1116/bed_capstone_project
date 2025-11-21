@@ -4,6 +4,7 @@ dist/
 .vscode/
 
 capstone_project_key.json
+.env
 
 logs/
 *.logs
