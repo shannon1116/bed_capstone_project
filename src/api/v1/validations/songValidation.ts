@@ -1,5 +1,45 @@
 import Joi, { ObjectSchema } from "joi";
 
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     Song:
+ *       type: object
+ *       required:
+ *         - id
+ *         - title
+ *         - composers
+ *         - characters
+ *         - time
+ *         - episodeId
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The unique identifier for a song
+ *           example: "123"
+ *         title:
+ *           type: string
+ *           description: The title of the song
+ *           example: "High Cost"
+ *         composers:
+ *           type: array
+ *           description: The names of the composers of the song
+ *           example: "Gina Lin, Garrett Victor"
+ *         characters:
+ *           type: array
+ *           description: The names of characters who sing the song
+ *           example: "Charlie, Michael"
+ *         time:
+ *           type: string
+ *           description: the duration of the song
+ *           example: "3 min 2 sec"
+ *         episodeId:
+ *           type: string
+ *           description: The id of the episode the song is in
+ *           example: "209"
+ */
+
 // Song operation schemas organized by request part
 export const songSchemas = {
     // POST /songs - Create new song
