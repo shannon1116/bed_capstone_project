@@ -57,7 +57,6 @@ const router: Router = express.Router();
  *       409:
  *         description: Song with this name already exists
  */
-
 // "/api/v1/songs" prefixes all below routes
 router.post("/", songController.createSong);
 
@@ -89,7 +88,6 @@ router.post("/", songController.createSong);
  *               songs:
  *                 $ref: '#/components/schemas/Song'
  */
-
 router.get("/", songController.getAllSongs);
 
 /**
@@ -125,7 +123,6 @@ router.get("/", songController.getAllSongs);
  *       403:
  *         description: Not authorized to retrieve this song
  */
-
 router.get("/:id", songController.getOneSong);
 
 /**
@@ -161,7 +158,6 @@ router.get("/:id", songController.getOneSong);
  *       403:
  *         description: Not authorized to update this song
  */
-
 router.put("/:id", songController.updateSong);
 
 /**
@@ -197,7 +193,6 @@ router.put("/:id", songController.updateSong);
  *       403:
  *         description: Not authorized to delete this song
  */
-
 router.delete("/:id", songController.deleteSong);
 
 export default router;
