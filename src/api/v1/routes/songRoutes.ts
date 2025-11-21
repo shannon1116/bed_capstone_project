@@ -3,6 +3,8 @@ import * as songController from "../controllers/songController";
 
 const router: Router = express.Router();
 
+// "/api/v1/songs" prefixes all below routes
+
 /**
  * @openapi
  * /songs:
@@ -30,7 +32,7 @@ const router: Router = express.Router();
  *                 minLength: 3
  *                 maxLength: 50
  *                 example: "111"
- *               name:
+ *               title:
  *                 type: string
  *                 example: "The Name of the Song"
  *               composers:
@@ -57,7 +59,6 @@ const router: Router = express.Router();
  *       409:
  *         description: Song with this name already exists
  */
-// "/api/v1/songs" prefixes all below routes
 router.post("/", songController.createSong);
 
 /**
@@ -99,7 +100,7 @@ router.get("/", songController.getAllSongs);
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: songId
+ *       - id: songId
  *         in: path
  *         required: true
  *         schema:
@@ -134,7 +135,7 @@ router.get("/:id", songController.getOneSong);
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: songId
+ *       - id: songId
  *         in: path
  *         required: true
  *         schema:
@@ -169,7 +170,7 @@ router.put("/:id", songController.updateSong);
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: songId
+ *       - id: songId
  *         in: path
  *         required: true
  *         schema:
