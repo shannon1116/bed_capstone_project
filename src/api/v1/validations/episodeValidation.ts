@@ -1,5 +1,45 @@
 import Joi, { ObjectSchema } from "joi";
 
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     Episode:
+ *       type: object
+ *       required:
+ *         - id
+ *         - title
+ *         - season
+ *         - episode
+ *         - director
+ *         - writers
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The unique identifier for an episode
+ *           example: "132"
+ *         title:
+ *           type: string
+ *           description: The title of the episode
+ *           example: "Bailey's Win"
+ *         season:
+ *           type: string
+ *           description: The season the episode is in
+ *           example: "1"
+ *         episode:
+ *           type: string
+ *           description: The episode number
+ *           example: "8"
+ *         director:
+ *           type: string
+ *           description: the name of the director of the episode
+ *           example: "Gallagher Charles"
+ *         writers:
+ *           type: array
+ *           description: The names of who wrote the episode
+ *           example: "Thomas Blakely, Livi Fine"
+ */
+
 // Episode operation schemas organized by request part
 export const episodeSchemas = {
     // POST /episodes - Create new episode
