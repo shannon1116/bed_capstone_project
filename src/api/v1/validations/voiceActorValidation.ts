@@ -1,5 +1,30 @@
 import Joi, { ObjectSchema } from "joi";
 
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     VoiceActor:
+ *       type: object
+ *       required:
+ *         - id
+ *         - voiceActorName
+ *         - characters
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The unique identifier for a voice actor
+ *           example: "23"
+ *         voiceActorName:
+ *           type: string
+ *           description: The name of the voice actor
+ *           example: "Thomas Bailey"
+ *         characters:
+ *           type: array
+ *           description: The characters the voice actor voices
+ *           example: "Violet, Lynn"
+ */
+
 // Voice Actor operation schemas organized by request part
 export const songSchemas = {
     // POST /voiceActors - Create new voice actor
