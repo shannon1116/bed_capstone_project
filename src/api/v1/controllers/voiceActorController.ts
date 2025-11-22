@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
+import * as voiceActorService from "../services/voiceActorService";
+import { VoiceActor } from "../models/voiceActorModel";
 
 /**
  * Manages requests and reponses to retrieve all Songs
@@ -13,8 +15,10 @@ export const getAllVoiceActors = async (
     next: NextFunction
 ): Promise<void> => {
     try {
+        const voiceActors: VoiceActor[] = await voiceActorService.getAllVoiceActors();
         res.status(HTTP_STATUS.OK).json({
             message: "Voice Actors retrieved successfully",
+            data: voiceActors,
         });
     } catch (error: unknown) {
         next(error);
@@ -33,8 +37,27 @@ export const getOneVoiceActor = async (
     next: NextFunction
 ): Promise<void> => {
     try {
+        const id: string = req.params.id;
+        
+        if (!id || id.trim() === "") {
+            res.status(HTTP_STATUS.BAD_REQUEST).json({
+                message: "Voice Actor ID is required."
+            });
+            return;
+        }
+        
+        const voiceActor: VoiceActor = await voiceActorService.getOneVoiceActor(id);
+        
+        if (!voiceActor) {
+            res.status(HTTP_STATUS.NOT_FOUND).json({
+                message: "Voice Actor not found."
+            });
+            return;
+        }
+        
         res.status(HTTP_STATUS.OK).json({
             message: "Voice Actor retrieved successfully",
+            data: voiceActor,
         });
     } catch (error: unknown) {
         next(error);
@@ -53,9 +76,34 @@ export const createVoiceActor = async (
     next: NextFunction
 ): Promise<void> => {
     try {
+        const requiredFields: (keyof VoiceActor)[] = [
+            'id',
+            'voiceActorName',
+            'characters',
+        ];
+        
+        const missingFields = requiredFields.filter(field => !(field in req.body));
+        
+        if (missingFields.length > 0) {
+            res.status(HTTP_STATUS.BAD_REQUEST).json({
+                message: "Missing required parameter."
+            });
+            return;
+        }
+        
+        const { id, voiceActorName, characters } = req.body;
+        
+        const newVoiceActor: VoiceActor = await voiceActorService.createVoiceActor({
+            id,
+            voiceActorName,
+            characters,
+        });
+        
         res.status(HTTP_STATUS.CREATED).json({
             message: "Voice Actor created successfully",
+            data: newVoiceActor,
         });
+
     } catch (error: unknown) {
         next(error);
     }
@@ -73,9 +121,38 @@ export const updateVoiceActor = async (
     next: NextFunction
 ): Promise<void> => {
     try {
+        const id: string = req.params.id;
+        
+        const { voiceActorName, characters } = req.body;
+        
+        if (!id || id.trim() === "") {
+            res.status(HTTP_STATUS.BAD_REQUEST).json({
+                message: "Voice Actor ID is required.",
+            });
+            return;
+        }
+        
+        const updatedVoiceActor: VoiceActor = await voiceActorService.updateVoiceActor(id, { voiceActorName, characters });
+        
+        if (!voiceActorName) {
+            res.status(HTTP_STATUS.BAD_REQUEST).json({
+                message: "Voice Actor Name string is empty.",
+            });
+            return;
+        }
+        
+        if (!characters) {
+            res.status(HTTP_STATUS.BAD_REQUEST).json({
+                message: "Character array is empty.",
+            });
+            return;
+        }
+
         res.status(HTTP_STATUS.OK).json({
             message: "Voice Actor updated successfully",
+            data: updatedVoiceActor,
         });
+
     } catch (error: unknown) {
         next(error);
     }
@@ -93,9 +170,28 @@ export const deleteVoiceActor = async (
     next: NextFunction
 ): Promise<void> => {
     try {
+        const id: string = req.params.id;
+        
+        if (!id || id.trim() === "") {
+            res.status(HTTP_STATUS.BAD_REQUEST).json({
+                message: "Voice Actor ID is required.",
+            });
+            return;
+        }
+        
+        const voiceActor: VoiceActor = await voiceActorService.getOneVoiceActor(id);
+        
+        if (!voiceActor) {
+            res.status(HTTP_STATUS.NOT_FOUND).json({
+                message: "Voice Actor not found.",
+            });
+            return;
+        }
+
         res.status(HTTP_STATUS.OK).json({
             message: "Voice Actor successfully deleted",
         });
+        
     } catch (error: unknown) {
         next(error);
     }
