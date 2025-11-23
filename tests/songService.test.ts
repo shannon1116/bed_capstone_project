@@ -32,92 +32,94 @@ describe("Song Service", () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
-
-  describe("getAllSongs", () => {
-    it("fetches all songs", async () => {
-        const mockSongs = [makeMockSong()];
-        const mockSnapshot = createMockSnapshot<Song>(
-            mockSongs.map(song => ({
-                id: song.id,
-                data: { ...song },
-            }))
-        );
-
-        (firestoreRepository.getDocuments as jest.Mock).mockResolvedValue(mockSnapshot);
-        
-        const result = await songService.getAllSongs();
-        expect(Array.isArray(result)).toBe(true);
-        expect(result.length).toBe(1);
-        expect(result[0]).toMatchObject(mockSongs[0]);
-        expect(firestoreRepository.getDocuments).toHaveBeenCalledWith("HazbinHotelSongs");
-    });
-
-    describe("getOneSong", () => {
-        it("returns song when found", async () => {
-            const mockSong = makeMockSong({ id: "1" });
-        
-            const { id, ...rest } = mockSong;
-            const mockDoc = createMockDoc<Song>(id, { id, ...rest });
-        
-            (firestoreRepository.getDocumentById as jest.Mock).mockResolvedValue(mockDoc);
-        
-            const result = await songService.getOneSong(mockSong.id);
-        
-            expect(result).toMatchObject(mockSong);
-            expect(firestoreRepository.getDocumentById).toHaveBeenCalledWith("HazbinHotelSongs", mockSong.id);
-        });
-    });
-
-    describe("createSong", () => {
-        it("creates and returns a new song", async () => {
-            const mockSong = makeMockSong();
-
-            (firestoreRepository.createDocument as jest.Mock).mockResolvedValue(mockSong.id);
-
-            const result = await songService.createSong(mockSong);
-
-            expect(result).toMatchObject(mockSong);
-            expect(firestoreRepository.createDocument).toHaveBeenCalledWith(
-                "HazbinHotelSongs",
-                expect.objectContaining({
-                    id: mockSong.id,
-                }),
-                mockSong.id
+    describe("getAllSongs", () => {
+        it("fetches all songs", async () => {
+            const mockSongs = [makeMockSong()];
+            const mockSnapshot = createMockSnapshot<Song>(
+                mockSongs.map(song => ({
+                    id: song.id,
+                    data: { ...song },
+                }))
             );
-        });
-    });
-
-    describe("updateSong", () => {
-        it("updates and returns an updated song", async () => {
-            const mockSong = makeMockSong({ id: "321" });
-            const updates = { title: "Bittersweet", characters: ["Mayday", "Kim"] };
-
-            const originalDoc = createMockDoc<Song>(mockSong.id, mockSong);
-            const updatedDoc = createMockDoc<Song>(mockSong.id, { ...mockSong, ...updates });
-
-            (firestoreRepository.getDocumentById as jest.Mock)
-            .mockResolvedValueOnce(originalDoc) 
-            .mockResolvedValueOnce(updatedDoc); 
             
-            (firestoreRepository.updateDocument as jest.Mock).mockResolvedValue(undefined);
-
-            const result = await songService.updateSong(mockSong.id, updates);
-
-            expect(result.title).toBe(updates.title);
-            expect(result.characters).toBe(updates.characters);
-            expect(firestoreRepository.updateDocument).toHaveBeenCalledWith("HazbinHotelSongs", mockSong.id, updates);
-        });
-    });
-    
-    describe("deleteSong", () => {
-        it("deletes a song without error", async () => {
-            const id = "211";
-            (firestoreRepository.deleteDocument as jest.Mock).mockResolvedValue(undefined);
+            (firestoreRepository.getDocuments as jest.Mock).mockResolvedValue(mockSnapshot);
             
-            await expect(songService.deleteSong(id)).resolves.toBeUndefined();
-
-            expect(firestoreRepository.deleteDocument).toHaveBeenCalledWith("HazbinHotelSongs", id);
+            const result = await songService.getAllSongs();
+            
+            expect(Array.isArray(result)).toBe(true);
+            expect(result.length).toBe(1);
+            expect(result[0]).toMatchObject(mockSongs[0]);
+            expect(firestoreRepository.getDocuments).toHaveBeenCalledWith("HazbinHotelSongs");
+        });
+        
+        describe("getOneSong", () => {
+            it("returns song when found", async () => {
+                const mockSong = makeMockSong({ id: "1" });
+                
+                const { id, ...rest } = mockSong;
+                const mockDoc = createMockDoc<Song>(id, { id, ...rest });
+                
+                (firestoreRepository.getDocumentById as jest.Mock).mockResolvedValue(mockDoc);
+                
+                const result = await songService.getOneSong(mockSong.id);
+                
+                expect(result).toMatchObject(mockSong);
+                expect(firestoreRepository.getDocumentById).toHaveBeenCalledWith("HazbinHotelSongs", mockSong.id);
+            });
+        });
+        
+        describe("createSong", () => {
+            it("creates and returns a new song", async () => {
+                const mockSong = makeMockSong();
+                
+                (firestoreRepository.createDocument as jest.Mock).mockResolvedValue(mockSong.id);
+                
+                const result = await songService.createSong(mockSong);
+                
+                expect(result).toMatchObject(mockSong);
+                
+                expect(firestoreRepository.createDocument).toHaveBeenCalledWith(
+                    "HazbinHotelSongs",
+                    expect.objectContaining({
+                        id: mockSong.id,
+                    }),
+                    mockSong.id
+                );
+            });
+        });
+        
+        describe("updateSong", () => {
+            it("updates and returns an updated song", async () => {
+                const mockSong = makeMockSong({ id: "321" });
+                const updates = { title: "Bittersweet", characters: ["Mayday", "Kim"] };
+                
+                const originalDoc = createMockDoc<Song>(mockSong.id, mockSong);
+                const updatedDoc = createMockDoc<Song>(mockSong.id, { ...mockSong, ...updates });
+                
+                (firestoreRepository.getDocumentById as jest.Mock)
+                .mockResolvedValueOnce(originalDoc) 
+                .mockResolvedValueOnce(updatedDoc); 
+                
+                (firestoreRepository.updateDocument as jest.Mock).mockResolvedValue(undefined);
+                
+                const result = await songService.updateSong(mockSong.id, updates);
+                
+                expect(result.title).toBe(updates.title);
+                expect(result.characters).toBe(updates.characters);
+                expect(firestoreRepository.updateDocument).toHaveBeenCalledWith("HazbinHotelSongs", mockSong.id, updates);
+            });
+        });
+        
+        describe("deleteSong", () => {
+            it("deletes a song without error", async () => {
+                const id = "211";
+                
+                (firestoreRepository.deleteDocument as jest.Mock).mockResolvedValue(undefined);
+                
+                await expect(songService.deleteSong(id)).resolves.toBeUndefined();
+                
+                expect(firestoreRepository.deleteDocument).toHaveBeenCalledWith("HazbinHotelSongs", id);
+            });
         });
     });
-});
 });
