@@ -1,6 +1,6 @@
 // Interface for Song Model
 export interface VoiceActor {
     id: string;
-    voiceActorName: string;
+    name: string;
     characters: Array<string>;
 }

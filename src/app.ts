@@ -1,9 +1,9 @@
 // import the express application and type definition
 import express, { Express } from "express";
-import setupSwagger from "../config/swagger";
-import dotenv from "dotenv";
+// import setupSwagger from "../config/swagger";
+// import dotenv from "dotenv";
 
-dotenv.config();
+// dotenv.config();
 
 import songRoutes from "./api/v1/routes/songRoutes";
 import episodeRoutes from "./api/v1/routes/episodeRoutes";
@@ -48,7 +48,7 @@ app.use("/api/v1/voiceActors", voiceActorRoutes);
 
 // Route Imports END
 
-setupSwagger(app);
+// setupSwagger(app);
 
 // export app and server for testing
 export default app;

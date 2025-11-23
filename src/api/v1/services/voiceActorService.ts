@@ -107,7 +107,7 @@ export const createVoiceActor = async (voiceActorData: VoiceActor): Promise<Voic
  */
 export const updateVoiceActor = async (
     id: string,
-    voiceActorData: Pick<VoiceActor, "voiceActorName" | "characters">
+    voiceActorData: Pick<VoiceActor, "name" | "characters">
 ): Promise<VoiceActor> => {
     const doc = await getDocumentById(COLLECTION, id);
 

@@ -147,7 +147,7 @@ export const updateSong = async (
 
         if (!characters) {
             res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Character array is empty.",
+                message: "Characters array is empty.",
             });
             return;
         }

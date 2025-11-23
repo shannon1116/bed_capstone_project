@@ -14,7 +14,6 @@ import {
     deleteDocument,
 } from "../repositories/firestoreRepository";
 
-
 const songs: Song[] = [];
 
 const COLLECTION: string = "HazbinHotelSongs";

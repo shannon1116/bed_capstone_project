@@ -78,7 +78,7 @@ export const createVoiceActor = async (
     try {
         const requiredFields: (keyof VoiceActor)[] = [
             'id',
-            'voiceActorName',
+            'name',
             'characters',
         ];
         
@@ -91,11 +91,11 @@ export const createVoiceActor = async (
             return;
         }
         
-        const { id, voiceActorName, characters } = req.body;
+        const { id, name, characters } = req.body;
         
         const newVoiceActor: VoiceActor = await voiceActorService.createVoiceActor({
             id,
-            voiceActorName,
+            name,
             characters,
         });
         
@@ -123,7 +123,7 @@ export const updateVoiceActor = async (
     try {
         const id: string = req.params.id;
         
-        const { voiceActorName, characters } = req.body;
+        const { name, characters } = req.body;
         
         if (!id || id.trim() === "") {
             res.status(HTTP_STATUS.BAD_REQUEST).json({
@@ -132,11 +132,11 @@ export const updateVoiceActor = async (
             return;
         }
         
-        const updatedVoiceActor: VoiceActor = await voiceActorService.updateVoiceActor(id, { voiceActorName, characters });
+        const updatedVoiceActor: VoiceActor = await voiceActorService.updateVoiceActor(id, { name, characters });
         
-        if (!voiceActorName) {
+        if (!name) {
             res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Voice Actor Name string is empty.",
+                message: "Name string is empty.",
             });
             return;
         }

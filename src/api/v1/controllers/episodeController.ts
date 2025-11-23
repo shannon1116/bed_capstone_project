@@ -79,6 +79,7 @@ export const createEpisode = async (
         const requiredFields: (keyof Episode)[] = [
             'id',
             'title',
+            'airdate',
             'season',
             'episode',
             'director',
@@ -94,11 +95,12 @@ export const createEpisode = async (
             return;
         }
         
-        const { id, title, season, episode, director, writers } = req.body;
+        const { id, title, airdate, season, episode, director, writers } = req.body;
         
         const newEpisode: Episode = await episodeService.createEpisode({
             id,
             title,
+            airdate,
             season,
             episode,
             director,
