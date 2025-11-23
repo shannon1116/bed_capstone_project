@@ -188,6 +188,8 @@ export const deleteVoiceActor = async (
             return;
         }
 
+        await voiceActorService.deleteVoiceActor(id);
+
         res.status(HTTP_STATUS.OK).json({
             message: "Voice Actor successfully deleted",
         });

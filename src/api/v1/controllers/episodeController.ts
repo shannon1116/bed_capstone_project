@@ -195,6 +195,8 @@ export const deleteEpisode = async (
             return;
         }
 
+        await episodeService.deleteEpisode(id);
+
         res.status(HTTP_STATUS.OK).json({
             message: "Episode successfully deleted",
         });

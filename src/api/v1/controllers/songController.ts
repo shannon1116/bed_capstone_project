@@ -193,6 +193,7 @@ export const deleteSong = async (
         }
 
         await songService.deleteSong(id);
+        
         res.status(HTTP_STATUS.OK).json({
             message: "Song successfully deleted",
         });
