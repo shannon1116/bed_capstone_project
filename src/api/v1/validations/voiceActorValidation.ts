@@ -22,7 +22,7 @@ import Joi, { ObjectSchema } from "joi";
  *         characters:
  *           type: array
  *           description: The characters the voice actor voices
- *           example: "Violet, Lynn"
+ *           example: ["Violet", "Lynn"]
  */
 
 // Voice Actor operation schemas organized by request part

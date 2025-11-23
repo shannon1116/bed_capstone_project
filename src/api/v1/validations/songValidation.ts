@@ -25,11 +25,11 @@ import Joi, { ObjectSchema } from "joi";
  *         composers:
  *           type: array
  *           description: The names of the composers of the song
- *           example: "Gina Lin, Garrett Victor"
+ *           example: ["Gina Lin", "Garrett Victor"]
  *         characters:
  *           type: array
  *           description: The names of characters who sing the song
- *           example: "Charlie, Michael"
+ *           example: ["Charlie", "Michael"]
  *         time:
  *           type: string
  *           description: the duration of the song

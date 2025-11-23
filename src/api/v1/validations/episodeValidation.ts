@@ -9,6 +9,7 @@ import Joi, { ObjectSchema } from "joi";
  *       required:
  *         - id
  *         - title
+ *         - airdate
  *         - season
  *         - episode
  *         - director
@@ -22,6 +23,10 @@ import Joi, { ObjectSchema } from "joi";
  *           type: string
  *           description: The title of the episode
  *           example: "Bailey's Win"
+ *         airdate:
+ *           type: string
+ *           description: The Date when the episode originally aired
+ *           example: "February 8, 2019"
  *         season:
  *           type: string
  *           description: The season the episode is in
@@ -37,7 +42,7 @@ import Joi, { ObjectSchema } from "joi";
  *         writers:
  *           type: array
  *           description: The names of who wrote the episode
- *           example: "Thomas Blakely, Livi Fine"
+ *           example: ["Thomas Blakely", "Livi Fine"]
  */
 
 // Episode operation schemas organized by request part
@@ -53,9 +58,13 @@ export const episodeSchemas = {
                 "any.required": "Title is required",
                 "string.empty": "Title cannot be empty",
             }),
+            airdate: Joi.string().required().messages({
+                "any.required": "Airdate is required",
+                "string.empty": "Airdate cannot be empty",
+            }),
             season: Joi.string().required().messages({
                 "any.required": "Season is required",
-                "string.empty": "Season cannot by empty",
+                "string.empty": "Season cannot be empty",
             }),
             episode: Joi.string().required().messages({
                 "any.required": "Episode is required",
