@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
 import * as voiceActorService from "../services/voiceActorService";
 import { VoiceActor } from "../models/voiceActorModel";
-import { successResponse } from "../models/responseModel";
+import { successResponse, errorResponse } from "../models/responseModel";
 
 /**
  * Manages requests and reponses to retrieve all Songs
@@ -40,18 +40,18 @@ export const getOneVoiceActor = async (
         const id: string = req.params.id;
         
         if (!id || id.trim() === "") {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Voice Actor ID is required."
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Voice Actor ID is required")
+            );
             return;
         }
         
         const voiceActor: VoiceActor = await voiceActorService.getOneVoiceActor(id);
         
         if (!voiceActor) {
-            res.status(HTTP_STATUS.NOT_FOUND).json({
-                message: "Voice Actor not found."
-            });
+            res.status(HTTP_STATUS.NOT_FOUND).json(
+                errorResponse("Voice Actor not found.")
+            );
             return;
         }
         
@@ -84,9 +84,9 @@ export const createVoiceActor = async (
         const missingFields = requiredFields.filter(field => !(field in req.body));
         
         if (missingFields.length > 0) {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Missing required parameter."
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Missing required parameter")
+            );
             return;
         }
         
@@ -124,25 +124,25 @@ export const updateVoiceActor = async (
         const { name, characters } = req.body;
         
         if (!id || id.trim() === "") {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Voice Actor ID is required.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Voice Actor ID is required.")
+            );
             return;
         }
         
         const updatedVoiceActor: VoiceActor = await voiceActorService.updateVoiceActor(id, { name, characters });
         
         if (!name) {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Name string is empty.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Name string is empty")
+            );
             return;
         }
         
         if (!characters) {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Character array is empty.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Characters array is empty.")
+            );
             return;
         }
 
@@ -170,9 +170,9 @@ export const deleteVoiceActor = async (
         const id: string = req.params.id;
         
         if (!id || id.trim() === "") {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Voice Actor ID is required.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Voice Actor ID is required.")
+            );
             return;
         }
         
@@ -182,6 +182,12 @@ export const deleteVoiceActor = async (
             res.status(HTTP_STATUS.NOT_FOUND).json({
                 message: "Voice Actor not found.",
             });
+            return;
+        }
+        if (!voiceActor) {
+            res.status(HTTP_STATUS.NOT_FOUND).json(
+                errorResponse("Voice Actor not found.")
+            );
             return;
         }
 
