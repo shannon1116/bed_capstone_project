@@ -98,7 +98,8 @@ router.post(
 router.get(
     "/", 
     validateRequest(episodeSchemas.list), 
-    episodeController.getAllEpisodes);
+    episodeController.getAllEpisodes
+);
 
 /**
  * @openapi
@@ -175,7 +176,8 @@ router.get(
 router.put(
     "/:id", 
     validateRequest(episodeSchemas.update), 
-    episodeController.updateEpisode);
+    episodeController.updateEpisode
+);
 
 /**
  * @openapi
@@ -213,6 +215,7 @@ router.put(
 router.delete(
     "/:id", 
     validateRequest(episodeSchemas.delete), 
-    episodeController.deleteEpisode);
+    episodeController.deleteEpisode
+);
 
 export default router;

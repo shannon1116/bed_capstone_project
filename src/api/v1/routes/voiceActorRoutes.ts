@@ -83,7 +83,11 @@ router.post(
  *               songs:
  *                 $ref: '#/components/schemas/VoiceActor'
  */
-router.get("/", voiceActorController.getAllVoiceActors);
+router.get(
+    "/", 
+    validateRequest(voiceActorSchemas.list), 
+    voiceActorController.getAllVoiceActors
+);
 
 /**
  * @openapi
@@ -157,7 +161,11 @@ router.get(
  *       403:
  *         description: Not authorized to update this voice actor
  */
-router.put("/:id", voiceActorController.updateVoiceActor);
+router.put(
+    "/:id", 
+    validateRequest(voiceActorSchemas.update), 
+    voiceActorController.updateVoiceActor
+);
 
 /**
  * @openapi
@@ -192,6 +200,10 @@ router.put("/:id", voiceActorController.updateVoiceActor);
  *       403:
  *         description: Not authorized to delete this voice actor
  */
-router.delete("/:id", voiceActorController.deleteVoiceActor);
+router.delete(
+    "/:id", 
+    validateRequest(voiceActorSchemas.delete), 
+    voiceActorController.deleteVoiceActor
+);
 
 export default router;

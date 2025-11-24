@@ -98,7 +98,8 @@ router.post(
 router.get(
     "/", 
     validateRequest(songSchemas.list), 
-    songController.getAllSongs);
+    songController.getAllSongs
+);
 
 /**
  * @openapi
@@ -175,7 +176,8 @@ router.get(
 router.put(
     "/:id", 
     validateRequest(songSchemas.update), 
-    songController.updateSong);
+    songController.updateSong
+);
 
 /**
  * @openapi
@@ -210,10 +212,10 @@ router.put(
  *       403:
  *         description: Not authorized to delete this song
  */
-router.delete("/:id", songController.deleteSong);
 router.delete(
     "/:id", 
     validateRequest(songSchemas.delete), 
-    songController.deleteSong);
+    songController.deleteSong
+);
 
 export default router;
