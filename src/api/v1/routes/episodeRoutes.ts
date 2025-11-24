@@ -1,4 +1,6 @@
 import express, { Router } from "express";
+import { validateRequest } from "../middleware/validate";
+import { episodeSchemas } from "../validations/episodeValidation";
 import * as episodeController from "../controllers/episodeController";
 
 const router: Router = express.Router();
@@ -59,7 +61,11 @@ const router: Router = express.Router();
  *       409:
  *         description: Episode with this name already exists
  */
-router.post("/", episodeController.createEpisode);
+router.post(
+    "/",
+    validateRequest(episodeSchemas.create),
+    episodeController.createEpisode
+);
 
 /**
  * @openapi
@@ -90,6 +96,11 @@ router.post("/", episodeController.createEpisode);
  *                 $ref: '#/components/schemas/Episode'
  */
 router.get("/", episodeController.getAllEpisodes);
+router.get(
+    "/:id",
+    validateRequest(episodeSchemas.getById),
+    episodeController.getOneEpisode
+);
 
 /**
  * @openapi
