@@ -1,4 +1,6 @@
 import express, { Router } from "express";
+import { validateRequest } from "../middleware/validate";
+import { songSchemas } from "../validations/songValidation";
 import * as songController from "../controllers/songController";
 
 const router: Router = express.Router();
@@ -59,7 +61,11 @@ const router: Router = express.Router();
  *       409:
  *         description: Song with this name already exists
  */
-router.post("/", songController.createSong);
+router.post(
+    "/",
+    validateRequest(songSchemas.create),
+    songController.createSong
+);
 
 /**
  * @openapi
@@ -125,6 +131,11 @@ router.get("/", songController.getAllSongs);
  *         description: Not authorized to retrieve this song
  */
 router.get("/:id", songController.getOneSong);
+router.get(
+    "/:id",
+    validateRequest(songSchemas.getById),
+    songController.getOneSong
+);
 
 /**
  * @openapi
