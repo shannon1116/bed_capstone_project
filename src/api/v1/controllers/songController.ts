@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
 import * as songService from "../services/songService";
-import { Song, EpisodeSongs } from "../models/songModel";
+import { Song, EpisodeSongs, CharacterSongs } from "../models/songModel";
 import { successResponse, errorResponse } from "../models/responseModel";
 
 /**
@@ -241,5 +241,45 @@ export const getSongsByEpisode = async (
     }
 };
 
-// get songs by characters - organize by which character is in which song
+// get songs by character - organize by which character is in which song
+/**
+ * Manages requests and reponses to get all the Songs a Character sings
+ * @param req - The express Request
+ * @param res  - The express Response
+ * @param next - The express middleware chaining function
+ */
+export const getSongsByCharacter = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+): Promise<void> => {
+    try {
+
+        const character: string = req.params.character;
+
+        if (!character || character.trim() === "") {
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Character is required")
+            );
+            return;
+        }
+
+        const characterSongs: CharacterSongs[] = await songService.getSongsByCharacter(character);
+        
+        if (characterSongs.length === 0) {
+            res.status(HTTP_STATUS.NOT_FOUND).json(
+                errorResponse("No songs found for this character")
+            );
+            return;
+        }
+
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(characterSongs, "Songs retrieved successfully")
+        );
+        
+    } catch (error: unknown) {
+        next(error);
+    }
+};
+
 // get the voice actors for characters and add them to the song array

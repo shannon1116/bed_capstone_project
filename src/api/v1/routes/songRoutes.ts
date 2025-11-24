@@ -83,6 +83,45 @@ router.get(
 
 /**
  * @openapi
+ * /songs/character/{character}:
+ *   get:
+ *     summary: Gets all the songs by character
+ *     tags: [Songs]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - character: character
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique name of the character
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Song'
+ *     responses:
+ *       200:
+ *         description: Songs retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Song'
+ *       404:
+ *         description: Songs not found
+ *       403:
+ *         description: Not authorized to retrieve this songs
+ */
+router.get(
+    "/character/:character", 
+    validateRequest(songSchemas.getSongsByCharacter), 
+    songController.getSongsByCharacter
+);
+
+/**
+ * @openapi
  * /songs:
  *   post:
  *     summary: Create a new song

@@ -92,6 +92,16 @@ export const songSchemas = {
         }),
     },
 
+    // GET /songs/character/:character - Get songs by character
+    getSongsByCharacter: {
+        params: Joi.object({
+            department: Joi.string().required().messages({
+                "any.required": "Character is required",
+                "string.empty": "Character cannot be empty",
+            }),
+        }),
+    },
+
     // PUT /songs/:id - Updates song
     update: {
         params: Joi.object({

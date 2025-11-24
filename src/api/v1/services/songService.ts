@@ -5,7 +5,8 @@ import {
 } from "firebase-admin/firestore";
 import { 
     Song,
-    EpisodeSongs
+    EpisodeSongs,
+    CharacterSongs,
 } from "../models/songModel";
 import {
     createDocument,
@@ -176,6 +177,32 @@ export const getSongsByEpisode = async (episodeId: string): Promise<EpisodeSongs
             .filter(episodeSongs => episodeSongs.episodeId === episodeId);
 
         return structuredClone(episodeSongs);
+    } catch (error: unknown) {
+        throw error;
+    }
+};
+
+/**getSongsByCharacter
+ * gets all songs for a specific character
+ * @param character - The Character that sings each song
+ * @returns An array of songs belonging to the specific character
+ */
+export const getSongsByCharacter = async (character: string): Promise<CharacterSongs[]> => {
+    try {
+        const snapshot = await getDocuments(COLLECTION);
+
+        const characterSongs: CharacterSongs[] = snapshot.docs
+            .map(doc => {
+                const data = doc.data() ?? {};
+                return {
+                    id: doc.id,
+                    title: data.title,
+                    character: data.character,
+                };
+            })
+            .filter(characterSongs => characterSongs.character === character);
+
+        return structuredClone(characterSongs);
     } catch (error: unknown) {
         throw error;
     }
