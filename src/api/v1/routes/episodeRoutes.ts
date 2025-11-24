@@ -95,7 +95,6 @@ router.post(
  *               songs:
  *                 $ref: '#/components/schemas/Episode'
  */
-router.get("/", episodeController.getAllEpisodes);
 router.get(
     "/:id",
     validateRequest(episodeSchemas.getById),

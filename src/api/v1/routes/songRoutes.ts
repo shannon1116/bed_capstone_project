@@ -95,7 +95,10 @@ router.post(
  *               songs:
  *                 $ref: '#/components/schemas/Song'
  */
-router.get("/", songController.getAllSongs);
+router.get(
+    "/", 
+    validateRequest(songSchemas.list), 
+    songController.getAllSongs);
 
 /**
  * @openapi
@@ -130,7 +133,6 @@ router.get("/", songController.getAllSongs);
  *       403:
  *         description: Not authorized to retrieve this song
  */
-router.get("/:id", songController.getOneSong);
 router.get(
     "/:id",
     validateRequest(songSchemas.getById),
@@ -170,7 +172,10 @@ router.get(
  *       403:
  *         description: Not authorized to update this song
  */
-router.put("/:id", songController.updateSong);
+router.put(
+    "/:id", 
+    validateRequest(songSchemas.update), 
+    songController.updateSong);
 
 /**
  * @openapi
@@ -206,5 +211,9 @@ router.put("/:id", songController.updateSong);
  *         description: Not authorized to delete this song
  */
 router.delete("/:id", songController.deleteSong);
+router.delete(
+    "/:id", 
+    validateRequest(songSchemas.delete), 
+    songController.deleteSong);
 
 export default router;
