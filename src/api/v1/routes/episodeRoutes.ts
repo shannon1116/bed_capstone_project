@@ -96,10 +96,9 @@ router.post(
  *                 $ref: '#/components/schemas/Episode'
  */
 router.get(
-    "/:id",
-    validateRequest(episodeSchemas.getById),
-    episodeController.getOneEpisode
-);
+    "/", 
+    validateRequest(episodeSchemas.list), 
+    episodeController.getAllEpisodes);
 
 /**
  * @openapi
@@ -134,7 +133,11 @@ router.get(
  *       403:
  *         description: Not authorized to retrieve this episode
  */
-router.get("/:id", episodeController.getOneEpisode);
+router.get(
+    "/:id",
+    validateRequest(episodeSchemas.getById),
+    episodeController.getOneEpisode
+);
 
 /**
  * @openapi
@@ -169,7 +172,10 @@ router.get("/:id", episodeController.getOneEpisode);
  *       403:
  *         description: Not authorized to update this episode
  */
-router.put("/:id", episodeController.updateEpisode);
+router.put(
+    "/:id", 
+    validateRequest(episodeSchemas.update), 
+    episodeController.updateEpisode);
 
 /**
  * @openapi
@@ -204,6 +210,9 @@ router.put("/:id", episodeController.updateEpisode);
  *       403:
  *         description: Not authorized to delete this episode
  */
-router.delete("/:id", episodeController.deleteEpisode);
+router.delete(
+    "/:id", 
+    validateRequest(episodeSchemas.delete), 
+    episodeController.deleteEpisode);
 
 export default router;
