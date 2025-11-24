@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
 import * as voiceActorService from "../services/voiceActorService";
 import { VoiceActor } from "../models/voiceActorModel";
+import { successResponse } from "../models/responseModel";
 
 /**
  * Manages requests and reponses to retrieve all Songs
@@ -16,10 +17,9 @@ export const getAllVoiceActors = async (
 ): Promise<void> => {
     try {
         const voiceActors: VoiceActor[] = await voiceActorService.getAllVoiceActors();
-        res.status(HTTP_STATUS.OK).json({
-            message: "Voice Actors retrieved successfully",
-            data: voiceActors,
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(voiceActors, "Voice Actors retrieved successfully")
+        );
     } catch (error: unknown) {
         next(error);
     }
@@ -55,10 +55,9 @@ export const getOneVoiceActor = async (
             return;
         }
         
-        res.status(HTTP_STATUS.OK).json({
-            message: "Voice Actor retrieved successfully",
-            data: voiceActor,
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(voiceActor, "Voice Actor retrieved successfully")
+        );
     } catch (error: unknown) {
         next(error);
     }
@@ -99,10 +98,9 @@ export const createVoiceActor = async (
             characters,
         });
         
-        res.status(HTTP_STATUS.CREATED).json({
-            message: "Voice Actor created successfully",
-            data: newVoiceActor,
-        });
+        res.status(HTTP_STATUS.CREATED).json(
+            successResponse(newVoiceActor, "Voice Actor created successfully")
+        );
 
     } catch (error: unknown) {
         next(error);
@@ -148,10 +146,9 @@ export const updateVoiceActor = async (
             return;
         }
 
-        res.status(HTTP_STATUS.OK).json({
-            message: "Voice Actor updated successfully",
-            data: updatedVoiceActor,
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(updatedVoiceActor, "Voice Actor updated successfully")
+        );
 
     } catch (error: unknown) {
         next(error);
@@ -190,9 +187,9 @@ export const deleteVoiceActor = async (
 
         await voiceActorService.deleteVoiceActor(id);
 
-        res.status(HTTP_STATUS.OK).json({
-            message: "Voice Actor successfully deleted",
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(null, "Voice Actor successfully deleted")
+        );
         
     } catch (error: unknown) {
         next(error);
