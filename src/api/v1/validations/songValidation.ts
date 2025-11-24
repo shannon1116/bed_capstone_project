@@ -82,6 +82,16 @@ export const songSchemas = {
         }),
     },
 
+    // GET /songs/episode/:episodeId - Get by episode
+    getByEpisode: {
+        params: Joi.object({
+            branchId: Joi.string().required().messages({
+                "any.required": "Episode ID is required",
+                "string.empty": "Episode ID cannot be empty",
+            }),
+        }),
+    },
+
     // PUT /songs/:id - Updates song
     update: {
         params: Joi.object({

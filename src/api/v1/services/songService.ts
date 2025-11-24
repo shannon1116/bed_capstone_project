@@ -4,7 +4,8 @@ import {
     DocumentSnapshot,
 } from "firebase-admin/firestore";
 import { 
-    Song, 
+    Song,
+    EpisodeSongs
 } from "../models/songModel";
 import {
     createDocument,
@@ -149,6 +150,32 @@ export const deleteSong = async (id: string): Promise<void> => {
         }
 
         await deleteDocument(COLLECTION, id);
+    } catch (error: unknown) {
+        throw error;
+    }
+};
+
+/**getSongsByEpisode
+ * gets all songs for a specific episode
+ * @param episodeId - The Episode ID of the songs
+ * @returns An list of songs belonging to a specific episode
+ */
+export const getSongsByEpisode = async (episodeId: string): Promise<EpisodeSongs[]> => {
+    try {
+        const snapshot = await getDocuments(COLLECTION);
+
+        const episodeSongs: EpisodeSongs[] = snapshot.docs
+            .map(doc => {
+                const data = doc.data() ?? {};
+                return {
+                    id: doc.id,
+                    title: data.title,
+                    episodeId: data.episodeId,
+                };
+            })
+            .filter(episodeSongs => episodeSongs.episodeId === episodeId);
+
+        return structuredClone(episodeSongs);
     } catch (error: unknown) {
         throw error;
     }

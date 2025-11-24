@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
 import * as songService from "../services/songService";
-import { Song } from "../models/songModel";
+import { Song, EpisodeSongs } from "../models/songModel";
 import { successResponse, errorResponse } from "../models/responseModel";
 
 /**
@@ -199,3 +199,47 @@ export const deleteSong = async (
         next(error);
     }
 };
+
+// get songs by episodes - see which songs are in which episodes
+/**
+ * Manages requests and reponses to get all Songs in an episode
+ * @param req - The express Request
+ * @param res  - The express Response
+ * @param next - The express middleware chaining function
+ */
+export const getSongsByEpisode = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+): Promise<void> => {
+    try {
+
+        const episodeId: string = req.params.episodeId;
+
+        if (!episodeId || episodeId.trim() === "") {
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Episode ID is required")
+            );
+            return;
+        }
+
+        const episodeSongs: EpisodeSongs[] = await songService.getSongsByEpisode(episodeId);
+        
+        if (episodeSongs.length === 0) {
+            res.status(HTTP_STATUS.NOT_FOUND).json(
+                errorResponse("No songs found for this episode")
+            );
+            return;
+        }
+
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(episodeSongs, "Songs retrieved successfully")
+        );
+        
+    } catch (error: unknown) {
+        next(error);
+    }
+};
+
+// get songs by characters - organize by which character is in which song
+// get the voice actors for characters and add them to the song array

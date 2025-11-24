@@ -7,6 +7,80 @@ const router: Router = express.Router();
 
 // "/api/v1/songs" prefixes all below routes
 
+
+/**
+ * @openapi
+ * /songs:
+ *   get:
+ *     summary: Retrieve a list of songs with optional filtering
+ *     tags: [Songs]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: limit
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 10
+ *         description: Maximum number of songs to return
+ *     responses:
+ *       200:
+ *         description: A list of songs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               songs:
+ *                 $ref: '#/components/schemas/Song'
+ */
+router.get(
+    "/", 
+    validateRequest(songSchemas.list), 
+    songController.getAllSongs
+);
+
+/**
+ * @openapi
+ * /songs/episode/{episodeId}:
+ *   get:
+ *     summary: Gets all the songs in an episode
+ *     tags: [Songs]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - episodeId: episodeId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique identifier of the episode
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Song'
+ *     responses:
+ *       200:
+ *         description: Song retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Song'
+ *       404:
+ *         description: Song not found
+ *       403:
+ *         description: Not authorized to retrieve this song
+ */
+router.get(
+    "/episode/:episodeId", 
+    validateRequest(songSchemas.getByEpisode), 
+    songController.getSongsByEpisode
+);
+
 /**
  * @openapi
  * /songs:
