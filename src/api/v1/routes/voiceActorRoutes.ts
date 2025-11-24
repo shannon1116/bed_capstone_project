@@ -1,4 +1,6 @@
 import express, { Router } from "express";
+import { validateRequest } from "../middleware/validate";
+import { voiceActorSchemas } from "../validations/voiceActorValidation";
 import * as voiceActorController from "../controllers/voiceActorController";
 
 const router: Router = express.Router();
@@ -47,7 +49,11 @@ const router: Router = express.Router();
  *       409:
  *         description: Voice actor with this name already exists
  */
-router.post("/", voiceActorController.createVoiceActor);
+router.post(
+    "/",
+    validateRequest(voiceActorSchemas.create),
+    voiceActorController.createVoiceActor
+);
 
 /**
  * @openapi
@@ -112,7 +118,11 @@ router.get("/", voiceActorController.getAllVoiceActors);
  *       403:
  *         description: Not authorized to retrieve this voice actor
  */
-router.get("/:id", voiceActorController.getOneVoiceActor);
+router.get(
+    "/:id",
+    validateRequest(voiceActorSchemas.getById),
+    voiceActorController.getOneVoiceActor
+);
 
 /**
  * @openapi

@@ -26,7 +26,7 @@ import Joi, { ObjectSchema } from "joi";
  */
 
 // Voice Actor operation schemas organized by request part
-export const songSchemas = {
+export const voiceActorSchemas = {
     // POST /voiceActors - Create new voice actor
     create: {
         body: Joi.object({
