@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
 import * as episodeService from "../services/episodeService";
 import { Episode } from "../models/episodeModel";
+import { successResponse } from "../models/responseModel";
 
 /**
  * Manages requests and reponses to retrieve all Episodes
@@ -16,10 +17,9 @@ export const getAllEpisodes = async (
 ): Promise<void> => {
     try {
         const episodes: Episode[] = await episodeService.getAllEpisodes();
-        res.status(HTTP_STATUS.OK).json({
-            message: "Episodes retrieved successfully",
-            data: episodes,
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(episodes, "Episodes retrieved successfully")
+        );
     } catch (error: unknown) {
         next(error);
     }
@@ -55,10 +55,9 @@ export const getOneEpisode = async (
             return;
         }
         
-        res.status(HTTP_STATUS.OK).json({
-            message: "Episode retrieved successfully",
-            data: episode,
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(episode, "Episode retrieved successfully")
+        );
     } catch (error: unknown) {
         next(error);
     }
@@ -107,10 +106,9 @@ export const createEpisode = async (
             writers,
         });
 
-        res.status(HTTP_STATUS.CREATED).json({
-            message: "Episode created successfully",
-            data: newEpisode,
-        });
+        res.status(HTTP_STATUS.CREATED).json(
+            successResponse(newEpisode, "Episode created successfully")
+        );
     
     } catch (error: unknown) {
         next(error);
@@ -155,10 +153,10 @@ export const updateEpisode = async (
             });
             return;
         }
-        res.status(HTTP_STATUS.OK).json({
-            message: "Episode updated successfully",
-            data: updatedEpisode,
-        });
+
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(updatedEpisode, "Episode updated successfully")
+        );
     
     } catch (error: unknown) {
         next(error);
@@ -197,9 +195,9 @@ export const deleteEpisode = async (
 
         await episodeService.deleteEpisode(id);
 
-        res.status(HTTP_STATUS.OK).json({
-            message: "Episode successfully deleted",
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(null, "Episode successfully deleted")
+        );
         
     } catch (error: unknown) {
         next(error);
