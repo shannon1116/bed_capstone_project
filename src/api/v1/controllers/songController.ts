@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
 import * as songService from "../services/songService";
 import { Song } from "../models/songModel";
-import { successResponse } from "../models/responseModel";
+import { successResponse, errorResponse } from "../models/responseModel";
 
 /**
  * Manages requests and reponses to retrieve all Songs
@@ -40,18 +40,18 @@ export const getOneSong = async (
         const id: string = req.params.id;
 
         if (!id || id.trim() === "") {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Song ID is required."
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Song ID is required")
+            );
             return;
         }
 
         const song: Song = await songService.getOneSong(id);
 
         if (!song) {
-            res.status(HTTP_STATUS.NOT_FOUND).json({
-                message: "Song not found."
-            });
+            res.status(HTTP_STATUS.NOT_FOUND).json(
+                errorResponse("Song not found.")
+            );
             return;
         }
 
@@ -87,9 +87,9 @@ export const createSong = async (
         const missingFields = requiredFields.filter(field => !(field in req.body));
 
         if (missingFields.length > 0) {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Missing required parameter."
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Missing required parameter")
+            );
             return;
         }
 
@@ -129,25 +129,25 @@ export const updateSong = async (
         const { title, characters } = req.body;
 
         if (!id || id.trim() === "") {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Song ID is required.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Song ID is required.")
+            );
             return;
         }
 
         const updatedSong: Song = await songService.updateSong(id, { title, characters });
 
         if (!title) {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Title string is empty.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Title string is empty")
+            );
             return;
         }
 
         if (!characters) {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Characters array is empty.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Characters array is empty.")
+            );
             return;
         }
 
@@ -175,18 +175,18 @@ export const deleteSong = async (
         const id: string = req.params.id;
 
         if (!id || id.trim() === "") {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Song ID is required.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Song ID is required.")
+            );
             return;
         }
 
         const song: Song = await songService.getOneSong(id);
 
         if (!song) {
-            res.status(HTTP_STATUS.NOT_FOUND).json({
-                message: "Song not found.",
-            });
+            res.status(HTTP_STATUS.NOT_FOUND).json(
+                errorResponse("Song not found.")
+            );
             return;
         }
 
