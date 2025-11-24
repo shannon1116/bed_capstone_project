@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
 import * as songService from "../services/songService";
 import { Song } from "../models/songModel";
+import { successResponse } from "../models/responseModel";
 
 /**
  * Manages requests and reponses to retrieve all Songs
@@ -16,10 +17,9 @@ export const getAllSongs = async (
 ): Promise<void> => {
     try {
         const songs: Song[] = await songService.getAllSongs();
-        res.status(HTTP_STATUS.OK).json({
-            message: "Songs retrieved successfully",
-            data: songs,
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(songs, "Songs retrieved successfully")
+        );
     } catch (error: unknown) {
         next(error);
     }
@@ -54,10 +54,10 @@ export const getOneSong = async (
             });
             return;
         }
-        res.status(HTTP_STATUS.OK).json({
-            message: "Song retrieved successfully",
-            data: song,
-        });
+
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(song, "Song retrieved successfully")
+        );
 
     } catch (error: unknown) {
         next(error);
@@ -104,10 +104,9 @@ export const createSong = async (
             episodeId,
         });
 
-        res.status(HTTP_STATUS.CREATED).json({
-            message: "Song created successfully",
-            data: newSong,
-        });
+        res.status(HTTP_STATUS.CREATED).json(
+            successResponse(newSong, "Song created successfully")
+        );
     } catch (error: unknown) {
         next(error);
     }
@@ -152,10 +151,9 @@ export const updateSong = async (
             return;
         }
 
-        res.status(HTTP_STATUS.OK).json({
-            message: "Song updated successfully",
-            data: updatedSong,
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(updatedSong, "Song updated successfully")
+        );
 
     } catch (error: unknown) {
         next(error);
@@ -194,10 +192,9 @@ export const deleteSong = async (
 
         await songService.deleteSong(id);
         
-        res.status(HTTP_STATUS.OK).json({
-            message: "Song successfully deleted",
-        });
-        
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(null, "Song successfully deleted")
+        );
     } catch (error: unknown) {
         next(error);
     }
