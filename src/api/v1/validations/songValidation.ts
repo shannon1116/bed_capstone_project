@@ -1,4 +1,4 @@
-import Joi, { ObjectSchema } from "joi";
+import Joi from "joi";
 
 /**
  * @openapi
@@ -53,11 +53,11 @@ export const songSchemas = {
                 "any.required": "Title is required",
                 "string.empty": "Title cannot be empty",
             }),
-            composers: Joi.array().required().messages({
+            composers: Joi.array().items(Joi.string()).required().messages({
                 "any.required": "Composers are required",
                 "string.empty": "Composers cannot be empty",
             }),
-            characters: Joi.array().required().messages({
+            characters: Joi.array().items(Joi.string()).required().messages({
                 "any.required": "Characters are required",
                 "string.empty": "Characters cannot be empty",
             }),
@@ -85,7 +85,7 @@ export const songSchemas = {
     // GET /songs/episode/:episodeId - Get by episode
     getByEpisode: {
         params: Joi.object({
-            branchId: Joi.string().required().messages({
+            episodeId: Joi.string().required().messages({
                 "any.required": "Episode ID is required",
                 "string.empty": "Episode ID cannot be empty",
             }),
@@ -95,7 +95,7 @@ export const songSchemas = {
     // GET /songs/character/:character - Get songs by character
     getSongsByCharacter: {
         params: Joi.object({
-            department: Joi.string().required().messages({
+            character: Joi.string().required().messages({
                 "any.required": "Character is required",
                 "string.empty": "Character cannot be empty",
             }),
@@ -115,7 +115,7 @@ export const songSchemas = {
                 "any.required": "Title is required",
                 "string.empty": "Title cannot be empty",
             }),
-            characters: Joi.array().required().messages({
+            characters: Joi.array().items(Joi.string()).required().messages({
                 "any.required": "Characters are required",
                 "string.empty": "Characters cannot be empty",
             }),

@@ -197,13 +197,13 @@ export const getSongsByCharacter = async (character: string): Promise<CharacterS
                 return {
                     id: doc.id,
                     title: data.title,
-                    character: data.character,
-                };
+                    characters: data.characters ?? []
+                } as CharacterSongs;
             })
-            .filter(characterSongs => characterSongs.character === character);
+            .filter(song => song.characters.includes(character));
 
         return structuredClone(characterSongs);
-    } catch (error: unknown) {
+    } catch (error) {
         throw error;
     }
 };

@@ -15,19 +15,10 @@ interface ValidationOptions {
     stripParams?: boolean;
 }
 
-/**
- * Creates an Express middleware function that validates different parts of the request
- * against separate Joi schemas and strips unknown fields appropriately.
- *
- * @param schemas - Object containing separate schemas for body, params, and query
- * @param options - Validation options for stripping behavior
- * @returns Express middleware function that performs the validation
- */
 export const validateRequest = (
     schemas: RequestSchemas,
     options: ValidationOptions = {}
 ): MiddlewareFunction => {
-    // stripParams - Usually don't strip params as they're route-defined
     const defaultOptions = {
         stripBody: true,
         stripQuery: true,
@@ -39,14 +30,6 @@ export const validateRequest = (
         try {
             const errors: string[] = [];
 
-            /**
-             * Validates a specific part of the request against a Joi schema
-             * @param schema - Joi schema to validate against
-             * @param data - The request data to validate
-             * @param partName - Name of the request part for error prefixing
-             * @param shouldStrip - Whether to strip unknown fields from the validated data
-             * @returns The original data if validation fails or stripping is disabled, otherwise the stripped/validated data
-             */
             const validatePart = (
                 schema: ObjectSchema,
                 data: any,
@@ -64,41 +47,42 @@ export const validateRequest = (
                             (detail) => `${partName}: ${detail.message}`
                         )
                     );
-                } else if (shouldStrip) {
-                    return value;
+                    return null;
                 }
-                return data;
+
+                return value;
             };
 
-            // Validate each request part if schema is provided
             if (schemas.body) {
-                req.body = validatePart(
+                const validated = validatePart(
                     schemas.body,
                     req.body,
                     "Body",
                     defaultOptions.stripBody
                 );
+                if (validated) Object.assign(req.body, validated);
             }
 
             if (schemas.params) {
-                req.params = validatePart(
+                const validated = validatePart(
                     schemas.params,
                     req.params,
                     "Params",
                     defaultOptions.stripParams
                 );
+                if (validated) Object.assign(req.params, validated);
             }
 
             if (schemas.query) {
-                req.query = validatePart(
+                const validated = validatePart(
                     schemas.query,
                     req.query,
                     "Query",
                     defaultOptions.stripQuery
                 );
+                if (validated) Object.assign(req.query, validated);
             }
 
-            // If there are any validation errors, return them
             if (errors.length > 0) {
                 return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     error: `Validation error: ${errors.join(", ")}`,
