@@ -264,7 +264,7 @@ export const getVoiceActorsBySong = async (
             })
             .filter(Boolean) as VoiceActorSongs[];
 
-        return matchedVoiceActors;
+        return structuredClone(matchedVoiceActors);
 
     } catch (error) {
         throw error;

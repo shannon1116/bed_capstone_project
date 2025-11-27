@@ -287,3 +287,39 @@ export const getSongsByCharacter = async (
 };
 
 // get the voice actors for characters and add them to the song array
+/**
+ * Manages requests and response to get voice actors by song
+ * @param req - The express Request
+ * @param res  - The express Response
+ * @param next - The express middleware chaining function
+ */ export const getVoiceActorBySong = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+ ): Promise<void> => {
+    try {
+        const { songId } = req.params;
+
+        if (!songId || songId.trim() === "") {
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Song ID is required.")
+            );
+            return;
+        }
+        
+        const voiceActors = await songService.getVoiceActorsBySong(songId);
+
+        if (voiceActors.length === 0) {
+            res.status(HTTP_STATUS.NOT_FOUND).json(
+                errorResponse("No Voice Actors found for this song.")
+            );
+            return;
+        }
+
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(voiceActors, "Voice Actors retrieved successfully")
+        );
+    } catch (error) {
+        next(error);
+    }
+ };
