@@ -50,8 +50,9 @@ describe("Song Controller", () => {
 
             expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
             expect(mockRes.json).toHaveBeenCalledWith({
-                message: "Song created successfully",
                 data: mockSong,
+                message: "Song created successfully",
+                status: "success",
             });
         });
 
@@ -75,7 +76,9 @@ describe("Song Controller", () => {
 
             expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
             expect(mockRes.json).toHaveBeenCalledWith({
-                message: "Missing required parameter.",
+                code: undefined,
+                error: "Missing required parameter",
+                status: "error",
             });
         });
     });
@@ -92,8 +95,9 @@ describe("Song Controller", () => {
 
             expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
             expect(mockRes.json).toHaveBeenCalledWith({
-                message: "Songs retrieved successfully",
                 data: mockSongs,
+                message: "Songs retrieved successfully",
+                status: "success",
             });
         });
 
@@ -120,8 +124,9 @@ describe("Song Controller", () => {
             expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
             expect(songService.getOneSong).toHaveBeenCalledWith(targetId);
             expect(mockRes.json).toHaveBeenCalledWith({
-                message: "Song retrieved successfully",
                 data: expectedSong,
+                message: "Song retrieved successfully",
+                status: "success",
             });
         });
 
@@ -145,7 +150,9 @@ describe("Song Controller", () => {
             expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
             expect(songService.getOneSong).not.toHaveBeenCalled();
             expect(mockRes.json).toHaveBeenCalledWith({
-                message: "Song ID is required.",
+                code: undefined,
+                error: "Song ID is required",
+                status: "error",
             });
         });
     })
@@ -178,8 +185,9 @@ describe("Song Controller", () => {
             expect(songService.updateSong).toHaveBeenCalledWith(targetId, updateData);
 
             expect(mockRes.json).toHaveBeenCalledWith({
-                message: "Song updated successfully",
                 data: expect.objectContaining(updatedSong),
+                message: "Song updated successfully",
+                status: "success",
             })
 
             expect(updatedSong.title).toBe(updateData.title);
@@ -213,7 +221,9 @@ describe("Song Controller", () => {
             expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
 
             expect(mockRes.json).toHaveBeenCalledWith({
-                message: "Characters array is empty.",
+                code: undefined,
+                error: "Characters array is empty.",
+                status: "error",
             })
             
         });
@@ -242,7 +252,9 @@ describe("Song Controller", () => {
             expect(songService.deleteSong).toHaveBeenCalledWith(targetId);
             expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
             expect(mockRes.json).toHaveBeenCalledWith({
+                data: null,
                 message: "Song successfully deleted",
+                status: "success",
             });
         });
 
@@ -266,7 +278,9 @@ describe("Song Controller", () => {
             expect(songService.deleteSong).not.toHaveBeenCalled();
             expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
             expect(mockRes.json).toHaveBeenCalledWith({
-                message: "Song ID is required.",
+                code: undefined,
+                error: "Song ID is required.",
+                status: "error",
             });
         });
     })
