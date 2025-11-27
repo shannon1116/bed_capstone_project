@@ -18,17 +18,9 @@ describe("Episode Routes", () => {
 
     describe("GET /api/v1/episodes/", () => {
         it("should call getAllEpisodes controller", async () => {
-            await request(app)
-            .get("/api/v1/episodes")
-            .query({
-                id: "Test ID",
-                title: "Test Title",
-                airdate: "Test Date",
-                season: "Test Season",
-                episode: "Test Episode",
-                director: "Test Director",
-                writers: ["Test Writer"],
-            });
+            await request(app).get("/api/v1/episodes")
+
+            expect(episodeController.getAllEpisodes).toHaveBeenCalled();
         });
     });
 

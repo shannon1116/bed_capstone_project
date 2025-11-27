@@ -117,7 +117,7 @@ export const songSchemas = {
         params: Joi.object({
             id: Joi.string().required().messages({
                 "any.required": "ID is required",
-                "string.empty": "ID cannot be emptry",
+                "string.empty": "ID cannot be empty",
             }),
         }),
         body: Joi.object({
