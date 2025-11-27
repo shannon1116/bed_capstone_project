@@ -25,7 +25,7 @@ describe("Episode Routes", () => {
     });
 
     describe("GET /api/v1/episodes/:id", () => {
-        it("should call getOneEpisodes controller", async () => {
+        it("should call getOneEpisode controller", async () => {
           await request(app).get("/api/v1/episodes/testId");
           expect(episodeController.getOneEpisode).toHaveBeenCalled();
         });
