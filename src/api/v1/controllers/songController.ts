@@ -292,7 +292,7 @@ export const getSongsByCharacter = async (
  * @param req - The express Request
  * @param res  - The express Response
  * @param next - The express middleware chaining function
- */ export const getVoiceActorBySong = async (
+ */ export const getVoiceActorsBySong = async (
     req: Request,
     res: Response,
     next: NextFunction,

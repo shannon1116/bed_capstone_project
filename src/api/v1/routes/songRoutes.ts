@@ -63,6 +63,33 @@ router.get(
 
 /**
  * @openapi
+ * /songs/voiceActor/{songId}:
+ *   get:
+ *     summary: Gets all the voice actors by song
+ *     tags: [Songs]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: songId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique id of the song
+ *     responses:
+ *       200:
+ *         description: Voice Actors retrieved successfully
+ *       404:
+ *         description: No Voice Actors found for this song.
+ */
+router.get(
+    "/voiceActor/:songId", 
+    validateRequest(songSchemas.getVoiceActorsBySong), 
+    songController.getVoiceActorsBySong
+);
+
+/**
+ * @openapi
  * /songs:
  *   get:
  *     summary: Retrieve a list of songs with optional filtering

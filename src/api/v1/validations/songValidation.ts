@@ -102,6 +102,16 @@ export const songSchemas = {
         }),
     },
 
+    // GET /songs/voiceActor/:songId - Get voice actors by song
+    getVoiceActorsBySong: {
+        params: Joi.object({
+            songId: Joi.string().required().messages({
+                "any.required": "Song ID is required",
+                "string.empty": "Song ID cannot be empty",
+            }),
+        }),
+    },
+
     // PUT /songs/:id - Updates song
     update: {
         params: Joi.object({
