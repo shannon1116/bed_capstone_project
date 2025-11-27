@@ -8,14 +8,14 @@ import Joi from "joi";
  *       type: object
  *       required:
  *         - id
- *         - voiceActorName
+ *         - name
  *         - characters
  *       properties:
  *         id:
  *           type: string
  *           description: The unique identifier for a voice actor
  *           example: "23"
- *         voiceActorName:
+ *         name:
  *           type: string
  *           description: The name of the voice actor
  *           example: "Thomas Bailey"
@@ -34,7 +34,7 @@ export const voiceActorSchemas = {
                 "any.required": "ID is required",
                 "string.empty": "ID cannot be empty",
             }),
-            voiceActorName: Joi.string().required().messages({
+            name: Joi.string().required().messages({
                 "any.required": "Name is required",
                 "string.empty": "Name cannot be empty",
             }),
@@ -64,7 +64,7 @@ export const voiceActorSchemas = {
             }),
         }),
         body: Joi.object({
-            voiceActorName: Joi.string().required().messages({
+            name: Joi.string().required().messages({
                 "any.required": "Name is required",
                 "string.empty": "Name cannot be empty",
             }),
