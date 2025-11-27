@@ -17,7 +17,7 @@ import {
 
 const voiceActors: VoiceActor[] = [];
 
-const COLLECTION: string = "HazbinHotelVoiceActors";
+const HazbinHotelVoiceActors: string = "HazbinHotelVoiceActors";
 
 /**
  * Retrieves all voice actors from services
@@ -26,7 +26,7 @@ const COLLECTION: string = "HazbinHotelVoiceActors";
 
 export const getAllVoiceActors = async (): Promise<VoiceActor[]> => {
     try {
-        const snapshot: QuerySnapshot = await getDocuments(COLLECTION);
+        const snapshot: QuerySnapshot = await getDocuments(HazbinHotelVoiceActors);
         const voiceActors: VoiceActor[] = snapshot.docs.map((doc) => {
             const data: DocumentData = doc.data();
             return {
@@ -51,7 +51,7 @@ export const getAllVoiceActors = async (): Promise<VoiceActor[]> => {
 export const getOneVoiceActor = async (id: string): Promise<VoiceActor> => {
     try {
         const doc: DocumentSnapshot | null = await getDocumentById(
-            COLLECTION,
+            HazbinHotelVoiceActors,
             id
         );
 
@@ -83,7 +83,7 @@ export const getOneVoiceActor = async (id: string): Promise<VoiceActor> => {
 
 export const createVoiceActor = async (voiceActorData: VoiceActor): Promise<VoiceActor> => {
     try {
-        const docId = await createDocument<VoiceActor>(COLLECTION, voiceActorData, voiceActorData.id);
+        const docId = await createDocument<VoiceActor>(HazbinHotelVoiceActors, voiceActorData, voiceActorData.id);
 
         const newVoiceActor: VoiceActor = {
             ...voiceActorData,
@@ -109,15 +109,15 @@ export const updateVoiceActor = async (
     id: string,
     voiceActorData: Pick<VoiceActor, "name" | "characters">
 ): Promise<VoiceActor> => {
-    const doc = await getDocumentById(COLLECTION, id);
+    const doc = await getDocumentById(HazbinHotelVoiceActors, id);
 
     if (!doc || !doc.exists) {
         throw new Error(`Voice Actor with ID ${id} not found`);
     }
 
-    await updateDocument(COLLECTION, id, voiceActorData);
+    await updateDocument(HazbinHotelVoiceActors, id, voiceActorData);
 
-    const updatedDoc = await getDocumentById(COLLECTION, id);
+    const updatedDoc = await getDocumentById(HazbinHotelVoiceActors, id);
     
     if (!updatedDoc || !updatedDoc.exists) {
         throw new Error(`Failed to retrieve updated voice actor with ID ${id}`);
@@ -149,7 +149,7 @@ export const deleteVoiceActor = async (id: string): Promise<void> => {
             throw new Error(`Voice Actor with ID ${id} not found`);
         }
 
-        await deleteDocument(COLLECTION, id);
+        await deleteDocument(HazbinHotelVoiceActors, id);
     } catch (error: unknown) {
         throw error;
     }

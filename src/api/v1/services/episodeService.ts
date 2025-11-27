@@ -17,7 +17,7 @@ import {
 
 const songs: Episode[] = [];
 
-const COLLECTION: string = "HazbinHotelEpisodes";
+const HazbinHotelEpisodes: string = "HazbinHotelEpisodes";
 
 /**
  * Retrieves all episodes from services
@@ -26,7 +26,7 @@ const COLLECTION: string = "HazbinHotelEpisodes";
 
 export const getAllEpisodes = async (): Promise<Episode[]> => {
     try {
-        const snapshot: QuerySnapshot = await getDocuments(COLLECTION);
+        const snapshot: QuerySnapshot = await getDocuments(HazbinHotelEpisodes);
         const episodes: Episode[] = snapshot.docs.map((doc) => {
             const data: DocumentData = doc.data();
             return {
@@ -51,7 +51,7 @@ export const getAllEpisodes = async (): Promise<Episode[]> => {
 export const getOneEpisode = async (id: string): Promise<Episode> => {
     try {
         const doc: DocumentSnapshot | null = await getDocumentById(
-            COLLECTION,
+            HazbinHotelEpisodes,
             id
         );
 
@@ -83,7 +83,7 @@ export const getOneEpisode = async (id: string): Promise<Episode> => {
 
 export const createEpisode = async (episodeData: Episode): Promise<Episode> => {
     try {
-        const docId = await createDocument<Episode>(COLLECTION, episodeData, episodeData.id);
+        const docId = await createDocument<Episode>(HazbinHotelEpisodes, episodeData, episodeData.id);
 
         const newEpisode: Episode = {
             ...episodeData,
@@ -109,15 +109,15 @@ export const updateEpisode = async (
     id: string,
     episodeData: Pick<Episode, "title" | "writers">
 ): Promise<Episode> => {
-    const doc = await getDocumentById(COLLECTION, id);
+    const doc = await getDocumentById(HazbinHotelEpisodes, id);
 
     if (!doc || !doc.exists) {
         throw new Error(`Episode with ID ${id} not found`);
     }
 
-    await updateDocument(COLLECTION, id, episodeData);
+    await updateDocument(HazbinHotelEpisodes, id, episodeData);
 
-    const updatedDoc = await getDocumentById(COLLECTION, id);
+    const updatedDoc = await getDocumentById(HazbinHotelEpisodes, id);
     
     if (!updatedDoc || !updatedDoc.exists) {
         throw new Error(`Failed to retrieve updated episode with ID ${id}`);
@@ -149,7 +149,7 @@ export const deleteEpisode = async (id: string): Promise<void> => {
             throw new Error(`Episode with ID ${id} not found`);
         }
 
-        await deleteDocument(COLLECTION, id);
+        await deleteDocument(HazbinHotelEpisodes, id);
     } catch (error: unknown) {
         throw error;
     }

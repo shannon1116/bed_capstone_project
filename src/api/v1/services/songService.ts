@@ -7,7 +7,11 @@ import {
     Song,
     EpisodeSongs,
     CharacterSongs,
+    VoiceActorSongs,
 } from "../models/songModel";
+import {
+    VoiceActor,
+ } from "../models/voiceActorModel";
 import {
     createDocument,
     getDocuments,
@@ -18,7 +22,9 @@ import {
 
 const songs: Song[] = [];
 
-const COLLECTION: string = "HazbinHotelSongs";
+const HazbinHotelSongs: string = "HazbinHotelSongs";
+
+const HazbinHotelVoiceActors: string = "HazbinHotelVoiceActors";
 
 /**
  * Retrieves all songs from services
@@ -27,7 +33,7 @@ const COLLECTION: string = "HazbinHotelSongs";
 
 export const getAllSongs = async (): Promise<Song[]> => {
     try {
-        const snapshot: QuerySnapshot = await getDocuments(COLLECTION);
+        const snapshot: QuerySnapshot = await getDocuments(HazbinHotelSongs);
         const songs: Song[] = snapshot.docs.map((doc) => {
             const data: DocumentData = doc.data();
             return {
@@ -52,7 +58,7 @@ export const getAllSongs = async (): Promise<Song[]> => {
 export const getOneSong = async (id: string): Promise<Song> => {
     try {
         const doc: DocumentSnapshot | null = await getDocumentById(
-            COLLECTION,
+            HazbinHotelSongs,
             id
         );
 
@@ -84,7 +90,7 @@ export const getOneSong = async (id: string): Promise<Song> => {
 
 export const createSong = async (songData: Song): Promise<Song> => {
     try {
-        const docId = await createDocument<Song>(COLLECTION, songData, songData.id);
+        const docId = await createDocument<Song>(HazbinHotelSongs, songData, songData.id);
 
         const newSong: Song = {
             ...songData,
@@ -110,15 +116,15 @@ export const updateSong = async (
     id: string,
     songData: Pick<Song, "title" | "characters">
 ): Promise<Song> => {
-    const doc = await getDocumentById(COLLECTION, id);
+    const doc = await getDocumentById(HazbinHotelSongs, id);
 
     if (!doc || !doc.exists) {
         throw new Error(`Song with ID ${id} not found`);
     }
 
-    await updateDocument(COLLECTION, id, songData);
+    await updateDocument(HazbinHotelSongs, id, songData);
 
-    const updatedDoc = await getDocumentById(COLLECTION, id);
+    const updatedDoc = await getDocumentById(HazbinHotelSongs, id);
     
     if (!updatedDoc || !updatedDoc.exists) {
         throw new Error(`Failed to retrieve updated song with ID ${id}`);
@@ -150,7 +156,7 @@ export const deleteSong = async (id: string): Promise<void> => {
             throw new Error(`Song with ID ${id} not found`);
         }
 
-        await deleteDocument(COLLECTION, id);
+        await deleteDocument(HazbinHotelSongs, id);
     } catch (error: unknown) {
         throw error;
     }
@@ -163,7 +169,7 @@ export const deleteSong = async (id: string): Promise<void> => {
  */
 export const getSongsByEpisode = async (episodeId: string): Promise<EpisodeSongs[]> => {
     try {
-        const snapshot = await getDocuments(COLLECTION);
+        const snapshot = await getDocuments(HazbinHotelSongs);
 
         const episodeSongs: EpisodeSongs[] = snapshot.docs
             .map(doc => {
@@ -187,9 +193,11 @@ export const getSongsByEpisode = async (episodeId: string): Promise<EpisodeSongs
  * @param character - The Character that sings each song
  * @returns An array of songs belonging to the specific character
  */
-export const getSongsByCharacter = async (character: string): Promise<CharacterSongs[]> => {
+export const getSongsByCharacter = async (
+    character: string
+): Promise<CharacterSongs[]> => {
     try {
-        const snapshot = await getDocuments(COLLECTION);
+        const snapshot = await getDocuments(HazbinHotelSongs);
 
         const characterSongs: CharacterSongs[] = snapshot.docs
             .map(doc => {
@@ -203,6 +211,61 @@ export const getSongsByCharacter = async (character: string): Promise<CharacterS
             .filter(song => song.characters.includes(character));
 
         return structuredClone(characterSongs);
+    } catch (error) {
+        throw error;
+    }
+};
+
+/**getVoiceActorsBySong
+ * gets all the voice actors for a specific song
+ * @param songId - The song the Voice Actors sing
+ * @returns An array of voice actors belonging to the specific song
+ */
+export const getVoiceActorsBySong = async (
+    songId: string
+): Promise<VoiceActorSongs[]> => {
+    try {
+        const songSnapshot = await getDocumentById(HazbinHotelSongs, songId);
+
+        if (!songSnapshot || !songSnapshot.exists) {
+            throw new Error(`Song with ID ${songId} not found`);
+        }
+
+        const song = { id: songSnapshot.id, ...songSnapshot.data() } as Song;
+
+        if (!song.characters || !Array.isArray(song.characters)) {
+            throw new Error(`Song ${songId} has no 'characters' field or it is not an array`);
+        }
+
+        const songCharacters = song.characters;
+
+        const voiceActorSnapshot = await getDocuments(HazbinHotelVoiceActors);
+
+        const voiceActors: VoiceActor[] = voiceActorSnapshot.docs
+            .map(doc => ({ id: doc.id, ...doc.data() } as VoiceActor));
+
+        const matchedVoiceActors: VoiceActorSongs[] = voiceActors
+            .map(actor => {
+                const matches = actor.characters.filter(character =>
+                    songCharacters.includes(character)
+                );
+
+                if (matches.length === 0) return null;
+
+                return {
+                    id: actor.id,
+                    name: actor.name,
+                    characters: matches,
+                    song: {
+                        id: song.id,
+                        title: song.title,
+                    },
+                } as VoiceActorSongs;
+            })
+            .filter(Boolean) as VoiceActorSongs[];
+
+        return matchedVoiceActors;
+
     } catch (error) {
         throw error;
     }

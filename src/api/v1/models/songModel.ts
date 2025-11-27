@@ -20,7 +20,16 @@ export interface EpisodeSongs {
 export interface CharacterSongs {
     id: string;
     title: string;
-    characters: string;
+    characters: Array<string>;
 }
 
 // get the voice actors for characters and add them to the song array
+export interface VoiceActorSongs {
+    id: string;
+    name: string;
+    characters: Array<string>;
+    song: {
+        id: string;
+        title: string;
+    };
+}
