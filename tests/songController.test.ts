@@ -5,9 +5,11 @@ import * as songService from "../src/api/v1/services/songService";
 import {
     Song, 
     EpisodeSongs,
-    CharacterSongs 
+    CharacterSongs,
+    VoiceActorSongs 
 } from "../src/api/v1/models/songModel";
 import { sampleSongs as mockSongs } from "../src/data/songs";
+import { sampleVoiceActors as mockVoiceActors } from "../src/data/voiceActors";
 //import { mock } from "node:test";
 
 jest.mock("../src/api/v1/services/songService");
@@ -423,6 +425,76 @@ describe("Song Controller", () => {
             expect(mockRes.json).toHaveBeenCalledWith({
                 code: undefined,
                 error: "Character is required",
+                status: "error",
+            });
+        });
+    })
+
+    describe("getVoiceActorsBySong", () => {
+        it("should return an array of all Voice Actors belonging to specific Song and HTTP_STATUS 200", async () => {
+
+            const targetSongId = "203";
+
+            const targetSong = mockSongs.find(song => song.id === targetSongId);
+            expect(targetSong).toBeDefined();
+
+            const expectedVoiceActors: VoiceActorSongs[] = mockVoiceActors
+            .map(actor => {
+                const matchedCharacters = actor.characters.filter(character =>
+                    targetSong!.characters.includes(character)
+                );
+
+                if (matchedCharacters.length === 0) return null;
+                
+                return {
+                    id: actor.id,
+                    name: actor.name,
+                    characters: matchedCharacters,
+                    song: {
+                        id: targetSong!.id,
+                        title: targetSong!.title,   
+                    },
+                } as VoiceActorSongs;
+            })
+            .filter(Boolean) as VoiceActorSongs[]
+
+            mockReq = { params: { songId: targetSongId } };
+
+            (songService.getVoiceActorsBySong as jest.Mock).mockResolvedValue(expectedVoiceActors);
+
+            await songController.getVoiceActorsBySong(
+                mockReq as Request,
+                mockRes as Response,
+                mockNext
+            );
+
+            expect(songService.getVoiceActorsBySong).toHaveBeenCalledWith(targetSongId);
+            expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
+            expect(mockRes.json).toHaveBeenCalledWith({
+                data: expectedVoiceActors,
+                message: "Voice Actors retrieved successfully",
+                status: "success",
+            });
+
+        });
+
+        it("should return an error message and HTTP_STATUS 400", async () => {
+
+            mockReq = {
+                params: { id: "" },
+            };
+
+            await songController.getVoiceActorsBySong(
+                mockReq as Request,
+                mockRes as Response,
+                mockNext
+            );
+
+            expect(songService.getVoiceActorsBySong).not.toHaveBeenCalled();
+            expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
+            expect(mockRes.json).toHaveBeenCalledWith({
+                code: undefined,
+                error: "Song ID is required.",
                 status: "error",
             });
         });
