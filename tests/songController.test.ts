@@ -2,7 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import { HTTP_STATUS } from "../src/constants/httpConstants";
 import * as songController from "../src/api/v1/controllers/songController";
 import * as songService from "../src/api/v1/services/songService";
-import { Song } from "../src/api/v1/models/songModel";
+import {
+    Song, 
+    EpisodeSongs,
+    CharacterSongs 
+} from "../src/api/v1/models/songModel";
 import { sampleSongs as mockSongs } from "../src/data/songs";
 //import { mock } from "node:test";
 
@@ -280,6 +284,145 @@ describe("Song Controller", () => {
             expect(mockRes.json).toHaveBeenCalledWith({
                 code: undefined,
                 error: "Song ID is required.",
+                status: "error",
+            });
+        });
+    })
+
+    describe("getSongsByEpisode", () => {
+        it("should return a list of all Songs belonging to an Episode and HTTP_STATUS 200", async () => {
+
+            const targetId = "102";
+
+            const expectedEpisodeSongs: EpisodeSongs[] = mockSongs
+            .filter(songs => songs.episodeId === targetId)
+            .map(songs => ({
+                id: songs.id,
+                title: songs.title,
+                episodeId: songs.episodeId,
+            }));
+
+            mockReq = {
+                params: { episodeId: targetId.toString() },
+            };
+
+            (songService.getSongsByEpisode as jest.Mock).mockResolvedValue(expectedEpisodeSongs);
+
+            await songController.getSongsByEpisode(
+                mockReq as Request,
+                mockRes as Response,
+                mockNext
+            );
+
+            expect(songService.getSongsByEpisode).toHaveBeenCalledWith(targetId);
+            expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
+            expect(mockRes.json).toHaveBeenCalledWith({
+                data: expectedEpisodeSongs,
+                message: "Songs retrieved successfully",
+                status: "success",
+            });
+
+        });
+
+        it("should return an error message and HTTP_STATUS 400", async () => {
+
+            const targetId = "";
+
+            const expectedEpisodeSongs: EpisodeSongs[] = mockSongs
+            .filter(songs => songs.episodeId === targetId)
+            .map(songs => ({
+                id: songs.id,
+                title: songs.title,
+                episodeId: songs.episodeId,
+            }));
+
+            mockReq = {
+                params: { episodeId: targetId.toString() },
+            };
+
+            (songService.getSongsByEpisode as jest.Mock).mockResolvedValue(expectedEpisodeSongs);
+
+            await songController.getSongsByEpisode(
+                mockReq as Request,
+                mockRes as Response,
+                mockNext
+            );
+
+            expect(songService.getSongsByEpisode).not.toHaveBeenCalled();
+            expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
+            expect(mockRes.json).toHaveBeenCalledWith({
+                code: undefined,
+                error: "Episode ID is required",
+                status: "error",
+            });
+
+        });
+    });
+
+    describe("getSongsByCharacter", () => {
+        it("should return an array of all Songs belonging to specific Character and HTTP_STATUS 200", async () => {
+
+            const targetCharacter = "Vox";
+
+            const expectedCharacterSongs: CharacterSongs[] = mockSongs
+            .filter(songs => songs.characters.includes(targetCharacter))
+            .map(songs => ({
+                id: songs.id,
+                title: songs.title,
+                characters: songs.characters,
+            }));
+
+            mockReq = {
+                params: { character: targetCharacter.toString() },
+            };
+
+            (songService.getSongsByCharacter as jest.Mock).mockResolvedValue(expectedCharacterSongs);
+
+            await songController.getSongsByCharacter(
+                mockReq as Request,
+                mockRes as Response,
+                mockNext
+            );
+
+            expect(songService.getSongsByCharacter).toHaveBeenCalledWith(targetCharacter);
+            expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
+            expect(mockRes.json).toHaveBeenCalledWith({
+                data: expectedCharacterSongs,
+                message: "Songs retrieved successfully",
+                status: "success",
+            });
+
+        });
+
+        it("should return an error message and HTTP_STATUS 400", async () => {
+
+            const targetCharacter = "";
+
+            const expectedCharacterSongs: CharacterSongs[] = mockSongs
+            .filter(songs => songs.characters.includes(targetCharacter))
+            .map(songs => ({
+                id: songs.id,
+                title: songs.title,
+                characters: songs.characters,
+            }));
+
+            mockReq = {
+                params: { character: targetCharacter.toString() },
+            };
+
+            (songService.getSongsByCharacter as jest.Mock).mockResolvedValue(expectedCharacterSongs);
+
+            await songController.getSongsByCharacter(
+                mockReq as Request,
+                mockRes as Response,
+                mockNext
+            );
+
+            expect(songService.getSongsByCharacter).not.toHaveBeenCalled();
+            expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
+            expect(mockRes.json).toHaveBeenCalledWith({
+                code: undefined,
+                error: "Character is required",
                 status: "error",
             });
         });
