@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
 import * as episodeService from "../services/episodeService";
 import { Episode } from "../models/episodeModel";
+import { successResponse, errorResponse } from "../models/responseModel";
 
 /**
  * Manages requests and reponses to retrieve all Episodes
@@ -16,10 +17,9 @@ export const getAllEpisodes = async (
 ): Promise<void> => {
     try {
         const episodes: Episode[] = await episodeService.getAllEpisodes();
-        res.status(HTTP_STATUS.OK).json({
-            message: "Episodes retrieved successfully",
-            data: episodes,
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(episodes, "Episodes retrieved successfully")
+        );
     } catch (error: unknown) {
         next(error);
     }
@@ -40,25 +40,24 @@ export const getOneEpisode = async (
         const id: string = req.params.id;
         
         if (!id || id.trim() === "") {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Episode ID is required."
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Episode ID is required")
+            );
             return;
         }
         
         const episode: Episode = await episodeService.getOneEpisode(id);
         
         if (!episode) {
-            res.status(HTTP_STATUS.NOT_FOUND).json({
-                message: "Episode not found."
-            });
+            res.status(HTTP_STATUS.NOT_FOUND).json(
+                errorResponse("Episode not found.")
+            );
             return;
         }
         
-        res.status(HTTP_STATUS.OK).json({
-            message: "Episode retrieved successfully",
-            data: episode,
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(episode, "Episode retrieved successfully")
+        );
     } catch (error: unknown) {
         next(error);
     }
@@ -89,9 +88,9 @@ export const createEpisode = async (
         const missingFields = requiredFields.filter(field => !(field in req.body));
         
         if (missingFields.length > 0) {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Missing required parameter."
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Missing required parameter")
+            );
             return;
         }
         
@@ -107,10 +106,9 @@ export const createEpisode = async (
             writers,
         });
 
-        res.status(HTTP_STATUS.CREATED).json({
-            message: "Episode created successfully",
-            data: newEpisode,
-        });
+        res.status(HTTP_STATUS.CREATED).json(
+            successResponse(newEpisode, "Episode created successfully")
+        );
     
     } catch (error: unknown) {
         next(error);
@@ -134,31 +132,31 @@ export const updateEpisode = async (
         const { title, writers } = req.body;
         
         if (!id || id.trim() === "") {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Episode ID is required.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Episode ID is required.")
+            );
             return;
         }
         
         const updatedEpisode: Episode = await episodeService.updateEpisode(id, { title, writers });
         
         if (!title) {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Title string is empty.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Title string is empty")
+            );
             return;
         }
         
         if (!writers) {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Writers array is empty.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Writers array is empty.")
+            );
             return;
         }
-        res.status(HTTP_STATUS.OK).json({
-            message: "Episode updated successfully",
-            data: updatedEpisode,
-        });
+
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(updatedEpisode, "Episode updated successfully")
+        );
     
     } catch (error: unknown) {
         next(error);
@@ -180,26 +178,26 @@ export const deleteEpisode = async (
         const id: string = req.params.id;
         
         if (!id || id.trim() === "") {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Episode ID is required.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Episode ID is required.")
+            );
             return;
         }
         
         const episode: Episode = await episodeService.getOneEpisode(id);
         
         if (!episode) {
-            res.status(HTTP_STATUS.NOT_FOUND).json({
-                message: "Episode not found.",
-            });
+            res.status(HTTP_STATUS.NOT_FOUND).json(
+                errorResponse("Episode not found.")
+            );
             return;
         }
 
         await episodeService.deleteEpisode(id);
 
-        res.status(HTTP_STATUS.OK).json({
-            message: "Episode successfully deleted",
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(null, "Episode successfully deleted")
+        );
         
     } catch (error: unknown) {
         next(error);

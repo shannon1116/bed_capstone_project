@@ -1,4 +1,6 @@
 import express, { Router } from "express";
+import { validateRequest } from "../middleware/validate";
+import { episodeSchemas } from "../validations/episodeValidation";
 import * as episodeController from "../controllers/episodeController";
 
 const router: Router = express.Router();
@@ -59,7 +61,11 @@ const router: Router = express.Router();
  *       409:
  *         description: Episode with this name already exists
  */
-router.post("/", episodeController.createEpisode);
+router.post(
+    "/",
+    validateRequest(episodeSchemas.create),
+    episodeController.createEpisode
+);
 
 /**
  * @openapi
@@ -89,7 +95,11 @@ router.post("/", episodeController.createEpisode);
  *               songs:
  *                 $ref: '#/components/schemas/Episode'
  */
-router.get("/", episodeController.getAllEpisodes);
+router.get(
+    "/", 
+    validateRequest(episodeSchemas.list), 
+    episodeController.getAllEpisodes
+);
 
 /**
  * @openapi
@@ -124,7 +134,11 @@ router.get("/", episodeController.getAllEpisodes);
  *       403:
  *         description: Not authorized to retrieve this episode
  */
-router.get("/:id", episodeController.getOneEpisode);
+router.get(
+    "/:id",
+    validateRequest(episodeSchemas.getById),
+    episodeController.getOneEpisode
+);
 
 /**
  * @openapi
@@ -159,7 +173,11 @@ router.get("/:id", episodeController.getOneEpisode);
  *       403:
  *         description: Not authorized to update this episode
  */
-router.put("/:id", episodeController.updateEpisode);
+router.put(
+    "/:id", 
+    validateRequest(episodeSchemas.update), 
+    episodeController.updateEpisode
+);
 
 /**
  * @openapi
@@ -194,6 +212,10 @@ router.put("/:id", episodeController.updateEpisode);
  *       403:
  *         description: Not authorized to delete this episode
  */
-router.delete("/:id", episodeController.deleteEpisode);
+router.delete(
+    "/:id", 
+    validateRequest(episodeSchemas.delete), 
+    episodeController.deleteEpisode
+);
 
 export default router;

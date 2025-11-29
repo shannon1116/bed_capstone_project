@@ -47,8 +47,9 @@ describe("Voice Actor Controller", () => {
         
             expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
             expect(mockRes.json).toHaveBeenCalledWith({
-            message: "Voice Actor created successfully",
                 data: mockVoiceActor,
+                message: "Voice Actor created successfully",
+                status: "success",
             });
         });
         
@@ -69,7 +70,9 @@ describe("Voice Actor Controller", () => {
         
             expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
             expect(mockRes.json).toHaveBeenCalledWith({
-                message: "Missing required parameter.",
+                code: undefined,
+                error: "Missing required parameter",
+                status: "error",
             });
         });
     });
@@ -86,12 +89,13 @@ describe("Voice Actor Controller", () => {
             
             expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
             expect(mockRes.json).toHaveBeenCalledWith({
+                data: mockVoiceActors,
                 message: "Voice Actors retrieved successfully",
-                    data: mockVoiceActors,
-                });
+                status: "success",
             });
-            
         });
+            
+    });
             
         describe("getOneVoiceActor", () => {
             it("should return a voice actor when found and HTTP_STATUS of 200", async () => {
@@ -114,8 +118,9 @@ describe("Voice Actor Controller", () => {
                 expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
                 expect(voiceActorService.getOneVoiceActor).toHaveBeenCalledWith(targetId);
                 expect(mockRes.json).toHaveBeenCalledWith({
-                    message: "Voice Actor retrieved successfully",
                     data: expectedVoiceActor,
+                    message: "Voice Actor retrieved successfully",
+                    status: "success",
                 });
             });
             
@@ -139,7 +144,9 @@ describe("Voice Actor Controller", () => {
                 expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
                 expect(voiceActorService.getOneVoiceActor).not.toHaveBeenCalled();
                 expect(mockRes.json).toHaveBeenCalledWith({
-                    message: "Voice Actor ID is required.",
+                    code: undefined,
+                    error: "Voice Actor ID is required",
+                    status: "error",
                 });
             });
         })
@@ -172,8 +179,9 @@ describe("Voice Actor Controller", () => {
                 expect(voiceActorService.updateVoiceActor).toHaveBeenCalledWith(targetId, updateData);
                 
                 expect(mockRes.json).toHaveBeenCalledWith({
-                    message: "Voice Actor updated successfully",
                     data: expect.objectContaining(updatedVoiceActor),
+                    message: "Voice Actor updated successfully",
+                    status: "success",
                 })
                 
                 expect(updatedVoiceActor.name).toBe(updateData.name);
@@ -207,7 +215,9 @@ describe("Voice Actor Controller", () => {
                 expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
                 
                 expect(mockRes.json).toHaveBeenCalledWith({
-                    message: "Name string is empty.",
+                    code: undefined,
+                    error: "Name string is empty",
+                    status: "error",
                 })
             });
         })
@@ -235,7 +245,9 @@ describe("Voice Actor Controller", () => {
                 expect(voiceActorService.deleteVoiceActor).toHaveBeenCalledWith(targetId);
                 expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
                 expect(mockRes.json).toHaveBeenCalledWith({
+                    data: null,
                     message: "Voice Actor successfully deleted",
+                    status: "success",
                 });
             });
                 
@@ -259,7 +271,9 @@ describe("Voice Actor Controller", () => {
                 expect(voiceActorService.deleteVoiceActor).not.toHaveBeenCalled();
                 expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
                 expect(mockRes.json).toHaveBeenCalledWith({
-                    message: "Voice Actor ID is required.",
+                    code: undefined,
+                    error: "Voice Actor ID is required.",
+                    status: "error",
                 });
             });
         })

@@ -51,8 +51,9 @@ describe("Episode Controller", () => {
     
                 expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
                 expect(mockRes.json).toHaveBeenCalledWith({
-                    message: "Episode created successfully",
                     data: mockEpisode,
+                    message: "Episode created successfully",
+                    status: "success"
                 });
             });
     
@@ -77,7 +78,9 @@ describe("Episode Controller", () => {
     
                 expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
                 expect(mockRes.json).toHaveBeenCalledWith({
-                    message: "Missing required parameter.",
+                    code: undefined,
+                    error: "Missing required parameter",
+                    status: "error",
                 });
             });
         });
@@ -94,8 +97,9 @@ describe("Episode Controller", () => {
         
                 expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
                 expect(mockRes.json).toHaveBeenCalledWith({
-                    message: "Episodes retrieved successfully",
                     data: mockEpisodes,
+                    message: "Episodes retrieved successfully",
+                    status: "success",
                 });
             });
         
@@ -122,8 +126,9 @@ describe("Episode Controller", () => {
                 expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
                 expect(episodeService.getOneEpisode).toHaveBeenCalledWith(targetId);
                 expect(mockRes.json).toHaveBeenCalledWith({
-                    message: "Episode retrieved successfully",
                     data: expectedEpisode,
+                    message: "Episode retrieved successfully",
+                    status: "success",
                 });
             });
         
@@ -147,7 +152,9 @@ describe("Episode Controller", () => {
                 expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
                 expect(episodeService.getOneEpisode).not.toHaveBeenCalled();
                 expect(mockRes.json).toHaveBeenCalledWith({
-                    message: "Episode ID is required.",
+                    code: undefined,
+                    error: "Episode ID is required",
+                    status: "error",
                 });
             });
         })
@@ -180,8 +187,9 @@ describe("Episode Controller", () => {
                 expect(episodeService.updateEpisode).toHaveBeenCalledWith(targetId, updateData);
         
                 expect(mockRes.json).toHaveBeenCalledWith({
-                    message: "Episode updated successfully",
                     data: expect.objectContaining(updatedEpisode),
+                    message: "Episode updated successfully",
+                    status: "success",
                 })
         
                 expect(updatedEpisode.title).toBe(updateData.title);
@@ -215,7 +223,9 @@ describe("Episode Controller", () => {
                 expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
         
                 expect(mockRes.json).toHaveBeenCalledWith({
-                    message: "Writers array is empty.",
+                    code: undefined,
+                    error: "Writers array is empty.",
+                    status: "error",
                 })
                     
             });
@@ -244,7 +254,9 @@ describe("Episode Controller", () => {
                 expect(episodeService.deleteEpisode).toHaveBeenCalledWith(targetId);
                 expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
                 expect(mockRes.json).toHaveBeenCalledWith({
+                    data: null,
                     message: "Episode successfully deleted",
+                    status: "success",
                 });
             });
         
@@ -268,7 +280,9 @@ describe("Episode Controller", () => {
                 expect(episodeService.deleteEpisode).not.toHaveBeenCalled();
                 expect(mockRes.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
                 expect(mockRes.json).toHaveBeenCalledWith({
-                    message: "Episode ID is required.",
+                    code: undefined,
+                    error: "Episode ID is required.",
+                    status: "error",
                 });
             });
         })

@@ -9,6 +9,9 @@ jest.mock("../src/api/v1/controllers/songController", () => ({
     getOneSong: jest.fn((req, res) => res.status(HTTP_STATUS.OK).send()),
     updateSong: jest.fn((req, res) => res.status(HTTP_STATUS.OK).send()),
     deleteSong: jest.fn((req, res) => res.status(HTTP_STATUS.OK).send()),
+    getSongsByEpisode: jest.fn((req, res) => res.status(HTTP_STATUS.OK).send()),
+    getSongsByCharacter: jest.fn((req, res) => res.status(HTTP_STATUS.OK).send()),
+    getVoiceActorsBySong: jest.fn((req, res) => res.status(HTTP_STATUS.OK).send()),
 }));
 
 describe("Song Routes", () => {
@@ -18,23 +21,41 @@ describe("Song Routes", () => {
 
     describe("GET /api/v1/songs/", () => {
         it("should call getAllSongs controller", async () => {
-            await request(app)
-            .get("/api/v1/songs")
-            .query({
-                id: "Test ID",
-                title: "Test Title",
-                composers: ["Test Composer"],
-                characters: ["Test Character"],
-                time: "Test Time",
-                episode: "Test Episode ID",
-            });
+            await request(app).get("/api/v1/songs")
+            
+            expect(songController.getAllSongs).toHaveBeenCalled();
         });
     });
 
     describe("GET /api/v1/songs/:id", () => {
         it("should call getOneSong controller", async () => {
-          await request(app).get("/api/v1/songs/testId");
+            await request(app).get("/api/v1/songs/testId");
+
           expect(songController.getOneSong).toHaveBeenCalled();
+        });
+    });
+
+    describe("GET /api/v1/songs/episode/:episodeId", () => {
+        it("should call getSongsByEpisode controller", async () => {
+            await request(app).get("/api/v1/songs/episode/testId");
+
+          expect(songController.getSongsByEpisode).toHaveBeenCalled();
+        });
+    });
+
+    describe("GET /api/v1/songs/character/:character", () => {
+        it("should call getSongsByCharacter controller", async () => {
+            await request(app).get("/api/v1/songs/character/testCharacter");
+
+          expect(songController.getSongsByCharacter).toHaveBeenCalled();
+        });
+    });
+
+    describe("GET /api/v1/songs/voiceActor/:songId", () => {
+        it("should call getVoiceActorsBySong controller", async () => {
+            await request(app).get("/api/v1/songs/voiceActor/testId");
+
+          expect(songController.getVoiceActorsBySong).toHaveBeenCalled();
         });
     });
 

@@ -1,4 +1,6 @@
 import express, { Router } from "express";
+import { validateRequest } from "../middleware/validate";
+import { songSchemas } from "../validations/songValidation";
 import * as songController from "../controllers/songController";
 
 const router: Router = express.Router();
@@ -7,59 +9,84 @@ const router: Router = express.Router();
 
 /**
  * @openapi
- * /songs:
- *   post:
- *     summary: Create a new song
+ * /songs/episode/{episodeId}:
+ *   get:
+ *     summary: Gets all the songs in an episode
  *     tags: [Songs]
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - id
- *               - title
- *               - composers
- *               - characters
- *               - time
- *               - episodeId
- *             properties:
- *               id:
- *                 type: string
- *                 minLength: 3
- *                 maxLength: 50
- *                 example: "111"
- *               title:
- *                 type: string
- *                 example: "The Name of the Song"
- *               composers:
- *                 type: array
- *                 example: "Mike Bland", "Heather Blake"
- *               characters:
- *                 type: array
- *                 example: "Simon", "Judy"
- *               time:
- *                 type: string
- *                 example: "5 min 5 sec"
- *               episodeId:
- *                 type: string
- *                 example: "271"
+ *     parameters:
+ *       - name: episodeId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique identifier of the episode
  *     responses:
- *       201:
- *         description: Song created successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Song'
- *       400:
- *         description: Invalid input data
- *       409:
- *         description: Song with this name already exists
+ *       200:
+ *         description: Songs retrieved successfully
+ *       404:
+ *         description: Song not found
  */
-router.post("/", songController.createSong);
+router.get(
+    "/episode/:episodeId", 
+    validateRequest(songSchemas.getByEpisode), 
+    songController.getSongsByEpisode
+);
+
+/**
+ * @openapi
+ * /songs/character/{character}:
+ *   get:
+ *     summary: Gets all the songs by character
+ *     tags: [Songs]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: character
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique name of the character
+ *     responses:
+ *       200:
+ *         description: Songs retrieved successfully
+ *       404:
+ *         description: Songs not found
+ */
+router.get(
+    "/character/:character", 
+    validateRequest(songSchemas.getSongsByCharacter), 
+    songController.getSongsByCharacter
+);
+
+/**
+ * @openapi
+ * /songs/voiceActor/{songId}:
+ *   get:
+ *     summary: Gets all the voice actors by song
+ *     tags: [Songs]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: songId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique id of the song
+ *     responses:
+ *       200:
+ *         description: Voice Actors retrieved successfully
+ *       404:
+ *         description: No Voice Actors found for this song.
+ */
+router.get(
+    "/voiceActor/:songId", 
+    validateRequest(songSchemas.getVoiceActorsBySong), 
+    songController.getVoiceActorsBySong
+);
 
 /**
  * @openapi
@@ -82,84 +109,90 @@ router.post("/", songController.createSong);
  *     responses:
  *       200:
  *         description: A list of songs
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               songs:
- *                 $ref: '#/components/schemas/Song'
  */
-router.get("/", songController.getAllSongs);
+router.get(
+    "/", 
+    validateRequest(songSchemas.list), 
+    songController.getAllSongs
+);
+
+/**
+ * @openapi
+ * /songs:
+ *   post:
+ *     summary: Create a new song
+ *     tags: [Songs]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       201:
+ *         description: Song created successfully
+ *       400:
+ *         description: Invalid input data
+ *       409:
+ *         description: Song with this ID already exists
+ */
+router.post(
+    "/",
+    validateRequest(songSchemas.create),
+    songController.createSong
+);
 
 /**
  * @openapi
  * /songs/{songId}:
  *   get:
- *     summary: Get a specific song's information
+ *     summary: Get a specific song
  *     tags: [Songs]
- *     security:
- *       - bearerAuth: []
  *     parameters:
- *       - id: songId
+ *       - name: songId
  *         in: path
  *         required: true
  *         schema:
  *           type: string
- *         description: The unique identifier of the song
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Song'
  *     responses:
  *       200:
  *         description: Song retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Song'
  *       404:
  *         description: Song not found
- *       403:
- *         description: Not authorized to retrieve this song
  */
-router.get("/:id", songController.getOneSong);
+router.get(
+    "/:id",
+    validateRequest(songSchemas.getById),
+    songController.getOneSong
+);
 
 /**
  * @openapi
  * /songs/{songId}:
  *   put:
- *     summary: Update a specific song's information
+ *     summary: Update a specific song
  *     tags: [Songs]
- *     security:
- *       - bearerAuth: []
  *     parameters:
- *       - id: songId
+ *       - name: songId
  *         in: path
  *         required: true
  *         schema:
  *           type: string
- *         description: The unique identifier of the song
  *     requestBody:
  *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Song'
  *     responses:
  *       200:
  *         description: Song updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Song'
  *       404:
  *         description: Song not found
- *       403:
- *         description: Not authorized to update this song
  */
-router.put("/:id", songController.updateSong);
+router.put(
+    "/:id", 
+    validateRequest(songSchemas.update), 
+    songController.updateSong
+);
 
 /**
  * @openapi
@@ -167,33 +200,22 @@ router.put("/:id", songController.updateSong);
  *   delete:
  *     summary: Deletes a specific song
  *     tags: [Songs]
- *     security:
- *       - bearerAuth: []
  *     parameters:
- *       - id: songId
+ *       - name: songId
  *         in: path
  *         required: true
  *         schema:
  *           type: string
- *         description: The unique identifier of the song
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Song'
  *     responses:
  *       200:
  *         description: Song deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Song'
  *       404:
  *         description: Song not found
- *       403:
- *         description: Not authorized to delete this song
  */
-router.delete("/:id", songController.deleteSong);
+router.delete(
+    "/:id", 
+    validateRequest(songSchemas.delete), 
+    songController.deleteSong
+);
 
 export default router;

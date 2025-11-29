@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
 import * as voiceActorService from "../services/voiceActorService";
 import { VoiceActor } from "../models/voiceActorModel";
+import { successResponse, errorResponse } from "../models/responseModel";
 
 /**
  * Manages requests and reponses to retrieve all Songs
@@ -16,10 +17,9 @@ export const getAllVoiceActors = async (
 ): Promise<void> => {
     try {
         const voiceActors: VoiceActor[] = await voiceActorService.getAllVoiceActors();
-        res.status(HTTP_STATUS.OK).json({
-            message: "Voice Actors retrieved successfully",
-            data: voiceActors,
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(voiceActors, "Voice Actors retrieved successfully")
+        );
     } catch (error: unknown) {
         next(error);
     }
@@ -40,25 +40,24 @@ export const getOneVoiceActor = async (
         const id: string = req.params.id;
         
         if (!id || id.trim() === "") {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Voice Actor ID is required."
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Voice Actor ID is required")
+            );
             return;
         }
         
         const voiceActor: VoiceActor = await voiceActorService.getOneVoiceActor(id);
         
         if (!voiceActor) {
-            res.status(HTTP_STATUS.NOT_FOUND).json({
-                message: "Voice Actor not found."
-            });
+            res.status(HTTP_STATUS.NOT_FOUND).json(
+                errorResponse("Voice Actor not found.")
+            );
             return;
         }
         
-        res.status(HTTP_STATUS.OK).json({
-            message: "Voice Actor retrieved successfully",
-            data: voiceActor,
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(voiceActor, "Voice Actor retrieved successfully")
+        );
     } catch (error: unknown) {
         next(error);
     }
@@ -85,9 +84,9 @@ export const createVoiceActor = async (
         const missingFields = requiredFields.filter(field => !(field in req.body));
         
         if (missingFields.length > 0) {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Missing required parameter."
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Missing required parameter")
+            );
             return;
         }
         
@@ -99,10 +98,9 @@ export const createVoiceActor = async (
             characters,
         });
         
-        res.status(HTTP_STATUS.CREATED).json({
-            message: "Voice Actor created successfully",
-            data: newVoiceActor,
-        });
+        res.status(HTTP_STATUS.CREATED).json(
+            successResponse(newVoiceActor, "Voice Actor created successfully")
+        );
 
     } catch (error: unknown) {
         next(error);
@@ -126,32 +124,31 @@ export const updateVoiceActor = async (
         const { name, characters } = req.body;
         
         if (!id || id.trim() === "") {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Voice Actor ID is required.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Voice Actor ID is required.")
+            );
             return;
         }
         
         const updatedVoiceActor: VoiceActor = await voiceActorService.updateVoiceActor(id, { name, characters });
         
         if (!name) {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Name string is empty.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Name string is empty")
+            );
             return;
         }
         
         if (!characters) {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Character array is empty.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Characters array is empty.")
+            );
             return;
         }
 
-        res.status(HTTP_STATUS.OK).json({
-            message: "Voice Actor updated successfully",
-            data: updatedVoiceActor,
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(updatedVoiceActor, "Voice Actor updated successfully")
+        );
 
     } catch (error: unknown) {
         next(error);
@@ -173,9 +170,9 @@ export const deleteVoiceActor = async (
         const id: string = req.params.id;
         
         if (!id || id.trim() === "") {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Voice Actor ID is required.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Voice Actor ID is required.")
+            );
             return;
         }
         
@@ -187,12 +184,18 @@ export const deleteVoiceActor = async (
             });
             return;
         }
+        if (!voiceActor) {
+            res.status(HTTP_STATUS.NOT_FOUND).json(
+                errorResponse("Voice Actor not found.")
+            );
+            return;
+        }
 
         await voiceActorService.deleteVoiceActor(id);
 
-        res.status(HTTP_STATUS.OK).json({
-            message: "Voice Actor successfully deleted",
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(null, "Voice Actor successfully deleted")
+        );
         
     } catch (error: unknown) {
         next(error);

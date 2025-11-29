@@ -1,4 +1,6 @@
 import express, { Router } from "express";
+import { validateRequest } from "../middleware/validate";
+import { voiceActorSchemas } from "../validations/voiceActorValidation";
 import * as voiceActorController from "../controllers/voiceActorController";
 
 const router: Router = express.Router();
@@ -47,7 +49,11 @@ const router: Router = express.Router();
  *       409:
  *         description: Voice actor with this name already exists
  */
-router.post("/", voiceActorController.createVoiceActor);
+router.post(
+    "/",
+    validateRequest(voiceActorSchemas.create),
+    voiceActorController.createVoiceActor
+);
 
 /**
  * @openapi
@@ -77,7 +83,11 @@ router.post("/", voiceActorController.createVoiceActor);
  *               songs:
  *                 $ref: '#/components/schemas/VoiceActor'
  */
-router.get("/", voiceActorController.getAllVoiceActors);
+router.get(
+    "/", 
+    validateRequest(voiceActorSchemas.list), 
+    voiceActorController.getAllVoiceActors
+);
 
 /**
  * @openapi
@@ -112,7 +122,11 @@ router.get("/", voiceActorController.getAllVoiceActors);
  *       403:
  *         description: Not authorized to retrieve this voice actor
  */
-router.get("/:id", voiceActorController.getOneVoiceActor);
+router.get(
+    "/:id",
+    validateRequest(voiceActorSchemas.getById),
+    voiceActorController.getOneVoiceActor
+);
 
 /**
  * @openapi
@@ -147,7 +161,11 @@ router.get("/:id", voiceActorController.getOneVoiceActor);
  *       403:
  *         description: Not authorized to update this voice actor
  */
-router.put("/:id", voiceActorController.updateVoiceActor);
+router.put(
+    "/:id", 
+    validateRequest(voiceActorSchemas.update), 
+    voiceActorController.updateVoiceActor
+);
 
 /**
  * @openapi
@@ -182,6 +200,10 @@ router.put("/:id", voiceActorController.updateVoiceActor);
  *       403:
  *         description: Not authorized to delete this voice actor
  */
-router.delete("/:id", voiceActorController.deleteVoiceActor);
+router.delete(
+    "/:id", 
+    validateRequest(voiceActorSchemas.delete), 
+    voiceActorController.deleteVoiceActor
+);
 
 export default router;

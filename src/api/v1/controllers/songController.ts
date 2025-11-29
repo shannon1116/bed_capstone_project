@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
 import * as songService from "../services/songService";
-import { Song } from "../models/songModel";
+import { Song, EpisodeSongs, CharacterSongs } from "../models/songModel";
+import { successResponse, errorResponse } from "../models/responseModel";
 
 /**
  * Manages requests and reponses to retrieve all Songs
@@ -16,17 +17,16 @@ export const getAllSongs = async (
 ): Promise<void> => {
     try {
         const songs: Song[] = await songService.getAllSongs();
-        res.status(HTTP_STATUS.OK).json({
-            message: "Songs retrieved successfully",
-            data: songs,
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(songs, "Songs retrieved successfully")
+        );
     } catch (error: unknown) {
         next(error);
     }
 };
 
 /**
- * Manages requests and reponses to retrieve a Song
+ * Manages requests and reponses to retrieve one Song
  * @param req - The express Request
  * @param res  - The express Response
  * @param next - The express middleware chaining function
@@ -36,28 +36,29 @@ export const getOneSong = async (
     res: Response,
     next: NextFunction
 ): Promise<void> => {
-    try {
+     try {
+        
         const id: string = req.params.id;
 
         if (!id || id.trim() === "") {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Song ID is required."
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Song ID is required")
+            );
             return;
         }
 
         const song: Song = await songService.getOneSong(id);
 
         if (!song) {
-            res.status(HTTP_STATUS.NOT_FOUND).json({
-                message: "Song not found."
-            });
+            res.status(HTTP_STATUS.NOT_FOUND).json(
+                errorResponse("Song not found")
+            );
             return;
         }
-        res.status(HTTP_STATUS.OK).json({
-            message: "Song retrieved successfully",
-            data: song,
-        });
+
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(song, "Song retrieved successfully")
+        );
 
     } catch (error: unknown) {
         next(error);
@@ -84,17 +85,18 @@ export const createSong = async (
             'time',
             'episodeId',
         ];
+        
         const missingFields = requiredFields.filter(field => !(field in req.body));
-
+        
         if (missingFields.length > 0) {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Missing required parameter."
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Missing required parameter")
+            );
             return;
         }
-
+        
         const { id, title, composers, characters, time, episodeId } = req.body;
-
+        
         const newSong: Song = await songService.createSong({
             id,
             title,
@@ -103,11 +105,11 @@ export const createSong = async (
             time,
             episodeId,
         });
+        
+        res.status(HTTP_STATUS.CREATED).json(
+            successResponse(newSong, "Song created successfully")
+        );
 
-        res.status(HTTP_STATUS.CREATED).json({
-            message: "Song created successfully",
-            data: newSong,
-        });
     } catch (error: unknown) {
         next(error);
     }
@@ -126,36 +128,35 @@ export const updateSong = async (
 ): Promise<void> => {
     try {
         const id: string = req.params.id;
-
+        
         const { title, characters } = req.body;
-
+        
         if (!id || id.trim() === "") {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Song ID is required.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Song ID is required.")
+            );
             return;
         }
-
+        
         const updatedSong: Song = await songService.updateSong(id, { title, characters });
-
+        
         if (!title) {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Title string is empty.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Title string is empty")
+            );
             return;
         }
-
+        
         if (!characters) {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Characters array is empty.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Characters array is empty.")
+            );
             return;
         }
 
-        res.status(HTTP_STATUS.OK).json({
-            message: "Song updated successfully",
-            data: updatedSong,
-        });
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(updatedSong, "Song updated successfully")
+        );
 
     } catch (error: unknown) {
         next(error);
@@ -175,30 +176,150 @@ export const deleteSong = async (
 ): Promise<void> => {
     try {
         const id: string = req.params.id;
-
+        
         if (!id || id.trim() === "") {
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                message: "Song ID is required.",
-            });
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Song ID is required.")
+            );
             return;
         }
-
+        
         const song: Song = await songService.getOneSong(id);
-
+        
         if (!song) {
             res.status(HTTP_STATUS.NOT_FOUND).json({
                 message: "Song not found.",
             });
             return;
         }
+        if (!song) {
+            res.status(HTTP_STATUS.NOT_FOUND).json(
+                errorResponse("Song not found.")
+            );
+            return;
+        }
 
         await songService.deleteSong(id);
-        
-        res.status(HTTP_STATUS.OK).json({
-            message: "Song successfully deleted",
-        });
+
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(null, "Song successfully deleted")
+        );
         
     } catch (error: unknown) {
         next(error);
     }
 };
+
+/**
+ * Manages requests and reponses to get Songs by Episode
+ * @param req - The express Request
+ * @param res  - The express Response
+ * @param next - The express middleware chaining function
+ */
+export const getSongsByEpisode = async (
+    req: Request, 
+    res: Response, 
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const { episodeId } = req.params;
+
+        if (!episodeId || episodeId.trim() === "") {
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Episode ID is required")
+            );
+            return;
+        }
+
+        const episodeSongs: EpisodeSongs[] = await songService.getSongsByEpisode(episodeId);
+
+        if (episodeSongs.length === 0) {
+            res.status(HTTP_STATUS.NOT_FOUND).json(
+                errorResponse("No songs found for this episode")
+            );
+            return;
+        }
+
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(episodeSongs, "Songs retrieved successfully")
+        );
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Manages requests and reponses to get songs by Character
+ * @param req - The express Request
+ * @param res  - The express Response
+ * @param next - The express middleware chaining function
+ */
+export const getSongsByCharacter = async (
+    req: Request, 
+    res: Response, 
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const { character } = req.params;
+
+        if (!character || character.trim() === "") {
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Character is required")
+            );
+            return;
+        }
+
+        const characterSongs: CharacterSongs[] = await songService.getSongsByCharacter(character);
+
+        if (characterSongs.length === 0) {
+            res.status(HTTP_STATUS.NOT_FOUND).json(
+                errorResponse("No songs were found for this character")
+            );
+            return;
+        }
+        
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(characterSongs, "Songs retrieved successfully")
+        );
+    } catch (error) {
+        next(error);
+    }
+};
+
+// get the voice actors for characters and add them to the song array
+/**
+ * Manages requests and response to get voice actors by song
+ * @param req - The express Request
+ * @param res  - The express Response
+ * @param next - The express middleware chaining function
+ */ export const getVoiceActorsBySong = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+ ): Promise<void> => {
+    try {
+        const { songId } = req.params;
+
+        if (!songId || songId.trim() === "") {
+            res.status(HTTP_STATUS.BAD_REQUEST).json(
+                errorResponse("Song ID is required.")
+            );
+            return;
+        }
+        
+        const voiceActors = await songService.getVoiceActorsBySong(songId);
+
+        if (voiceActors.length === 0) {
+            res.status(HTTP_STATUS.NOT_FOUND).json(
+                errorResponse("No Voice Actors found for this song.")
+            );
+            return;
+        }
+
+        res.status(HTTP_STATUS.OK).json(
+            successResponse(voiceActors, "Voice Actors retrieved successfully")
+        );
+    } catch (error) {
+        next(error);
+    }
+ };
