@@ -2,6 +2,8 @@ import express, { Router } from "express";
 import { validateRequest } from "../middleware/validate";
 import { songSchemas } from "../validations/songValidation";
 import * as songController from "../controllers/songController";
+import authenticate from "../middleware/authenticate";
+import isAuthorized from "../middleware/authorize";
 
 const router: Router = express.Router();
 
@@ -29,7 +31,9 @@ const router: Router = express.Router();
  *         description: Song not found
  */
 router.get(
-    "/episode/:episodeId", 
+    "/episode/:episodeId",
+    authenticate,
+    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
     validateRequest(songSchemas.getByEpisode), 
     songController.getSongsByEpisode
 );
@@ -56,7 +60,9 @@ router.get(
  *         description: Songs not found
  */
 router.get(
-    "/character/:character", 
+    "/character/:character",
+    authenticate,
+    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
     validateRequest(songSchemas.getSongsByCharacter), 
     songController.getSongsByCharacter
 );
@@ -83,7 +89,9 @@ router.get(
  *         description: No Voice Actors found for this song.
  */
 router.get(
-    "/voiceActor/:songId", 
+    "/voiceActor/:songId",
+    authenticate,
+    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
     validateRequest(songSchemas.getVoiceActorsBySong), 
     songController.getVoiceActorsBySong
 );
@@ -111,7 +119,9 @@ router.get(
  *         description: A list of songs
  */
 router.get(
-    "/", 
+    "/",
+    authenticate,
+    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
     validateRequest(songSchemas.list), 
     songController.getAllSongs
 );
@@ -140,6 +150,8 @@ router.get(
  */
 router.post(
     "/",
+    authenticate,
+    isAuthorized({ hasRole: ["user"] }),
     validateRequest(songSchemas.create),
     songController.createSong
 );
@@ -164,6 +176,8 @@ router.post(
  */
 router.get(
     "/:id",
+    authenticate,
+    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
     validateRequest(songSchemas.getById),
     songController.getOneSong
 );
@@ -189,7 +203,9 @@ router.get(
  *         description: Song not found
  */
 router.put(
-    "/:id", 
+    "/:id",
+    authenticate,
+    isAuthorized({ hasRole: ["manager"] }),
     validateRequest(songSchemas.update), 
     songController.updateSong
 );
@@ -213,7 +229,9 @@ router.put(
  *         description: Song not found
  */
 router.delete(
-    "/:id", 
+    "/:id",
+    authenticate,
+    isAuthorized({ hasRole: ["admin"] }),
     validateRequest(songSchemas.delete), 
     songController.deleteSong
 );

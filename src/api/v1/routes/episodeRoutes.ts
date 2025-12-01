@@ -3,6 +3,9 @@ import { validateRequest } from "../middleware/validate";
 import { episodeSchemas } from "../validations/episodeValidation";
 import * as episodeController from "../controllers/episodeController";
 
+import authenticate from "../middleware/authenticate";
+import isAuthorized from "../middleware/authorize";
+
 const router: Router = express.Router();
 
 // "/api/v1/episodes" prefixes all below routes
@@ -63,6 +66,8 @@ const router: Router = express.Router();
  */
 router.post(
     "/",
+    authenticate,
+    isAuthorized({ hasRole: ["user"] }),
     validateRequest(episodeSchemas.create),
     episodeController.createEpisode
 );
@@ -96,7 +101,9 @@ router.post(
  *                 $ref: '#/components/schemas/Episode'
  */
 router.get(
-    "/", 
+    "/",
+    authenticate,
+    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
     validateRequest(episodeSchemas.list), 
     episodeController.getAllEpisodes
 );
@@ -136,6 +143,8 @@ router.get(
  */
 router.get(
     "/:id",
+    authenticate,
+    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
     validateRequest(episodeSchemas.getById),
     episodeController.getOneEpisode
 );
@@ -174,7 +183,9 @@ router.get(
  *         description: Not authorized to update this episode
  */
 router.put(
-    "/:id", 
+    "/:id",
+    authenticate,
+    isAuthorized({ hasRole: ["manager"] }),
     validateRequest(episodeSchemas.update), 
     episodeController.updateEpisode
 );
@@ -213,7 +224,9 @@ router.put(
  *         description: Not authorized to delete this episode
  */
 router.delete(
-    "/:id", 
+    "/:id",
+    authenticate,
+    isAuthorized({ hasRole: ["admin"] }),
     validateRequest(episodeSchemas.delete), 
     episodeController.deleteEpisode
 );

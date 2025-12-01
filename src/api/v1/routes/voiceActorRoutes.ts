@@ -3,6 +3,9 @@ import { validateRequest } from "../middleware/validate";
 import { voiceActorSchemas } from "../validations/voiceActorValidation";
 import * as voiceActorController from "../controllers/voiceActorController";
 
+import authenticate from "../middleware/authenticate";
+import isAuthorized from "../middleware/authorize";
+
 const router: Router = express.Router();
 
 // "/api/v1/voiceActors" prefixes all below routes
@@ -51,6 +54,8 @@ const router: Router = express.Router();
  */
 router.post(
     "/",
+    authenticate,
+    isAuthorized({ hasRole: ["user"] }),
     validateRequest(voiceActorSchemas.create),
     voiceActorController.createVoiceActor
 );
@@ -84,7 +89,9 @@ router.post(
  *                 $ref: '#/components/schemas/VoiceActor'
  */
 router.get(
-    "/", 
+    "/",
+    authenticate,
+    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
     validateRequest(voiceActorSchemas.list), 
     voiceActorController.getAllVoiceActors
 );
@@ -124,6 +131,8 @@ router.get(
  */
 router.get(
     "/:id",
+    authenticate,
+    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
     validateRequest(voiceActorSchemas.getById),
     voiceActorController.getOneVoiceActor
 );
@@ -162,7 +171,9 @@ router.get(
  *         description: Not authorized to update this voice actor
  */
 router.put(
-    "/:id", 
+    "/:id",
+    authenticate,
+    isAuthorized({ hasRole: ["manager"] }),
     validateRequest(voiceActorSchemas.update), 
     voiceActorController.updateVoiceActor
 );
@@ -201,7 +212,9 @@ router.put(
  *         description: Not authorized to delete this voice actor
  */
 router.delete(
-    "/:id", 
+    "/:id",
+    authenticate,
+    isAuthorized({ hasRole: ["admin"] }),
     validateRequest(voiceActorSchemas.delete), 
     voiceActorController.deleteVoiceActor
 );
