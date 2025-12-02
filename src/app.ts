@@ -15,6 +15,7 @@ import songRoutes from "./api/v1/routes/songRoutes";
 import episodeRoutes from "./api/v1/routes/episodeRoutes";
 import voiceActorRoutes from "./api/v1/routes/voiceActorRoutes";
 import userRoutes from "./api/v1/routes/userRoutes";
+import adminRoutes from "./api/v1/routes/adminRoutes";
 
 // initialize the express application
 const app: Express = express();
@@ -64,6 +65,7 @@ app.get("/api/v1/health", (req, res) => {
 app.use("/api/v1/songs", songRoutes);
 app.use("/api/v1/episodes", episodeRoutes);
 app.use("/api/v1/voiceActors", voiceActorRoutes);
+app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/users", userRoutes);
 
 // Route Imports END
