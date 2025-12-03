@@ -7,9 +7,9 @@ import {
 } from "./api/v1/middleware/logger";
 import errorHandler from "./api/v1/middleware/errorHandler";
 // import setupSwagger from "../config/swagger";
-// import dotenv from "dotenv";
+import dotenv from "dotenv";
 
-// dotenv.config();
+dotenv.config();
 
 import songRoutes from "./api/v1/routes/songRoutes";
 import episodeRoutes from "./api/v1/routes/episodeRoutes";
