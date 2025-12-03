@@ -3,8 +3,13 @@ import * as firestoreRepository from "../src/api/v1/repositories/firestoreReposi
 import { Episode } from "../src/api/v1/models/episodeModel";
 import { QuerySnapshot, QueryDocumentSnapshot } from "firebase-admin/firestore";
 
-// Mock the repository module
-jest.mock("../src/api/v1/repositories/firestoreRepository");
+jest.mock("../src/api/v1/repositories/firestoreRepository", () => ({
+    getDocuments: jest.fn(),
+    getDocumentById: jest.fn(),
+    createDocument: jest.fn(),
+    updateDocument: jest.fn(),
+    deleteDocument: jest.fn(),
+}));
 
 const createMockDoc = <T>(id: string, data: T): QueryDocumentSnapshot<T> => ({
     id,
