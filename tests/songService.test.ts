@@ -172,4 +172,37 @@ describe("Song Service", () => {
             expect(firestoreRepository.getDocuments).toHaveBeenCalledWith("HazbinHotelSongs");
         });
     });
+
+    describe("getVoiceActorsBySong", () => {
+        it("returns voice actors when provided a song id", async () => {
+            
+            const mockSong = { id: "1", title: "Song A", characters: ["Character X", "Character Z"] };
+
+            const mockVoiceActors = [
+                { id: "1", name: "Actor A", characters: ["Character X"] },
+                { id: "2", name: "Actor B", characters: ["Character Y"] },
+                { id: "3", name: "Actor C", characters: ["Character Z", "Character Y"] },
+            ];
+
+            (firestoreRepository.getDocumentById as jest.Mock).mockResolvedValue({
+                id: mockSong.id,
+                exists: true,
+                data: () => mockSong,
+            });
+
+            const mockActorSnapshot = createMockSnapshot(
+                mockVoiceActors.map(actor => ({ id: actor.id, data: actor }))
+            );
+            (firestoreRepository.getDocuments as jest.Mock).mockResolvedValue(mockActorSnapshot);
+            
+            const result = await songService.getVoiceActorsBySong("1");
+            
+            expect(result).toHaveLength(2);
+            expect(result.map(a => a.id)).toEqual(expect.arrayContaining(["1", "3"]));
+
+            expect(firestoreRepository.getDocuments).toHaveBeenCalledWith("HazbinHotelVoiceActors");
+            expect(firestoreRepository.getDocumentById).toHaveBeenCalledWith("HazbinHotelSongs", "1");
+        });
+    });
+
 });
