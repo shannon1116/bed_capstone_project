@@ -8,6 +8,14 @@ import { sampleVoiceActors as mockVoiceActors } from "../src/data/voiceActors";
 
 jest.mock("../src/api/v1/services/voiceActorService");
 
+jest.mock('../src/api/v1/repositories/firestoreRepository', () => ({
+    getDocuments: jest.fn(),
+    getDocumentById: jest.fn(),
+    createDocument: jest.fn(),
+    updateDocument: jest.fn(),
+    deleteDocument: jest.fn(),
+}));
+
 describe("Voice Actor Controller", () => {
     let mockReq: Partial<Request>;
     let mockRes: Partial<Response>;
