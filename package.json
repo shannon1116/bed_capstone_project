@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node src/server.ts",
     "build": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "make-admin": "ts-node src/api/v1/scripts/setAdminRole.ts"
   },
   "repository": {
     "type": "git",

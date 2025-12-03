@@ -20,15 +20,10 @@ import adminRoutes from "./api/v1/routes/adminRoutes";
 // initialize the express application
 const app: Express = express();
 
-// Logging middleware (should be applied early in the middleware stack)
-if (process.env.NODE_ENV === "production") {
-    // In production, log to files
-    app.use(accessLogger);
-    app.use(errorLogger);
-} else {
-    // In development, log to console for immediate feedback
-    app.use(consoleLogger);
-}
+app.use(accessLogger);
+app.use(errorLogger);
+app.use(consoleLogger);
+
 
 // Interface for health check response
 // An interface in TypeScript defines the structure or "shape" of an object.
