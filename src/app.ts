@@ -6,7 +6,7 @@ import {
     consoleLogger,
 } from "./api/v1/middleware/logger";
 import errorHandler from "./api/v1/middleware/errorHandler";
-// import setupSwagger from "../config/swagger";
+import setupSwagger from "../config/swagger";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -68,7 +68,7 @@ app.use("/api/v1/users", userRoutes);
 // Global error handling middleware (MUST be applied last)
 app.use(errorHandler);
 
-// setupSwagger(app);
+setupSwagger(app);
 
 // export app and server for testing
 export default app;

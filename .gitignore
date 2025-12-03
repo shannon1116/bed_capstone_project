@@ -9,5 +9,5 @@ capstone_project_key.json
 logs/
 *.logs
 
-scripts/
+src/api/v1/scripts/
 *.setAdminRole.ts
