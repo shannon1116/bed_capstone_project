@@ -23,7 +23,7 @@ describe("isAuthorized middleware", () => {
             role: "user",
         };
 
-        const middleware = isAuthorized({ hasRole: ["admin", "manager", "user"] });
+        const middleware = isAuthorized({ hasRole: ["admin", "editor", "user"] });
 
         middleware(
             mockRequest as Request,
@@ -40,7 +40,7 @@ describe("isAuthorized middleware", () => {
             role: "officer",
         };
 
-        const middleware = isAuthorized({ hasRole: ["admin", "manager", "user"] });
+        const middleware = isAuthorized({ hasRole: ["admin", "editor", "user"] });
 
         middleware(
             mockRequest as Request,
@@ -66,7 +66,7 @@ describe("isAuthorized middleware", () => {
         };
 
         const middleware = isAuthorized({
-            hasRole: ["manager"],
+            hasRole: ["editor"],
             allowSameUser: true,
         });
 

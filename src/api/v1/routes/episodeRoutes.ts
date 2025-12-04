@@ -103,7 +103,7 @@ router.post(
 router.get(
     "/",
     authenticate,
-    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
+    isAuthorized({ hasRole: ["admin", "editor", "user"] }),
     validateRequest(episodeSchemas.list), 
     episodeController.getAllEpisodes
 );
@@ -144,7 +144,7 @@ router.get(
 router.get(
     "/:id",
     authenticate,
-    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
+    isAuthorized({ hasRole: ["admin", "editor", "user"] }),
     validateRequest(episodeSchemas.getById),
     episodeController.getOneEpisode
 );
@@ -185,7 +185,7 @@ router.get(
 router.put(
     "/:id",
     authenticate,
-    isAuthorized({ hasRole: ["manager"] }),
+    isAuthorized({ hasRole: ["editor"] }),
     validateRequest(episodeSchemas.update), 
     episodeController.updateEpisode
 );

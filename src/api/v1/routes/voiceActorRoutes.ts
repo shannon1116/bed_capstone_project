@@ -91,7 +91,7 @@ router.post(
 router.get(
     "/",
     authenticate,
-    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
+    isAuthorized({ hasRole: ["admin", "editor", "user"] }),
     validateRequest(voiceActorSchemas.list), 
     voiceActorController.getAllVoiceActors
 );
@@ -132,7 +132,7 @@ router.get(
 router.get(
     "/:id",
     authenticate,
-    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
+    isAuthorized({ hasRole: ["admin", "editor", "user"] }),
     validateRequest(voiceActorSchemas.getById),
     voiceActorController.getOneVoiceActor
 );
@@ -173,7 +173,7 @@ router.get(
 router.put(
     "/:id",
     authenticate,
-    isAuthorized({ hasRole: ["manager"] }),
+    isAuthorized({ hasRole: ["editor"] }),
     validateRequest(voiceActorSchemas.update), 
     voiceActorController.updateVoiceActor
 );

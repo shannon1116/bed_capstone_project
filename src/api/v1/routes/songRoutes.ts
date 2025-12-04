@@ -33,7 +33,7 @@ const router: Router = express.Router();
 router.get(
     "/episode/:episodeId",
     authenticate,
-    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
+    isAuthorized({ hasRole: ["admin", "editor", "user"] }),
     validateRequest(songSchemas.getByEpisode), 
     songController.getSongsByEpisode
 );
@@ -62,7 +62,7 @@ router.get(
 router.get(
     "/character/:character",
     authenticate,
-    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
+    isAuthorized({ hasRole: ["admin", "editor", "user"] }),
     validateRequest(songSchemas.getSongsByCharacter), 
     songController.getSongsByCharacter
 );
@@ -91,7 +91,7 @@ router.get(
 router.get(
     "/voiceActor/:songId",
     authenticate,
-    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
+    isAuthorized({ hasRole: ["admin", "editor", "user"] }),
     validateRequest(songSchemas.getVoiceActorsBySong), 
     songController.getVoiceActorsBySong
 );
@@ -121,7 +121,7 @@ router.get(
 router.get(
     "/",
     authenticate,
-    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
+    isAuthorized({ hasRole: ["admin", "editor", "user"] }),
     validateRequest(songSchemas.list), 
     songController.getAllSongs
 );
@@ -177,7 +177,7 @@ router.post(
 router.get(
     "/:id",
     authenticate,
-    isAuthorized({ hasRole: ["admin", "manager", "user"] }),
+    isAuthorized({ hasRole: ["admin", "editor", "user"] }),
     validateRequest(songSchemas.getById),
     songController.getOneSong
 );
@@ -205,7 +205,7 @@ router.get(
 router.put(
     "/:id",
     authenticate,
-    isAuthorized({ hasRole: ["manager"] }),
+    isAuthorized({ hasRole: ["editor"] }),
     validateRequest(songSchemas.update), 
     songController.updateSong
 );
