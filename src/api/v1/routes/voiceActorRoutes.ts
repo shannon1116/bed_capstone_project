@@ -39,7 +39,7 @@ const router: Router = express.Router();
  *                 example: "Tory Beckett"
  *               characters:
  *                 type: array
- *                 example: "Luna, Patti"
+ *                 example: ["Luna", "Patti"]
  *     responses:
  *       201:
  *         description: Voice Actor created successfully
@@ -64,7 +64,7 @@ router.post(
  * @openapi
  * /voiceActors:
  *   get:
- *     summary: Retrieve a list of voice actors with optional filtering
+ *     summary: Retrieves a list of voice actors with optional filtering
  *     tags: [VoiceActors]
  *     security:
  *       - bearerAuth: []
@@ -78,15 +78,23 @@ router.post(
  *           maximum: 100
  *           default: 10
  *         description: Maximum number of voice actors to return
- *     responses:
- *       200:
- *         description: A list of voice actors
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               songs:
- *                 $ref: '#/components/schemas/VoiceActor'
+ * *     requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                    $ref: '#/components/schemas/VoiceActor'
+ *       responses:
+ *          200:
+ *              description: A list of voice actors
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    type: array
+ *                    voiceActors:
+ *                      $ref: '#/components/schemas/VoiceActor'
+ *      403:
+ *        description: Not authorized to retrieve this episode
  */
 router.get(
     "/",
@@ -125,7 +133,7 @@ router.get(
  *             schema:
  *               $ref: '#/components/schemas/VoiceActor'
  *       404:
- *         description: Episode not found
+ *         description: Voice actor not found
  *       403:
  *         description: Not authorized to retrieve this voice actor
  */

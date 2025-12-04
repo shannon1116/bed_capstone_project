@@ -51,7 +51,7 @@ const router: Router = express.Router();
  *                 example: "Susie Parker"
  *               writers:
  *                 type: array
- *                 example: "Jake Cross, Tory Bell"
+ *                 example: ["Jake Cross", "Tory Bell"]
  *     responses:
  *       201:
  *         description: Episode created successfully
@@ -99,6 +99,8 @@ router.post(
  *               type: array
  *               songs:
  *                 $ref: '#/components/schemas/Episode'
+ *       403:
+ *         description: Not authorized to retrieve this episode
  */
 router.get(
     "/",

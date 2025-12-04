@@ -24,11 +24,23 @@ const router: Router = express.Router();
  *         schema:
  *           type: string
  *         description: The unique identifier of the episode
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/EpisodeSongs'
  *     responses:
  *       200:
  *         description: Songs retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/EpisodeSongs'
  *       404:
  *         description: Song not found
+ *       403:
+ *         description: Not authorized to retrieve these songs
  */
 router.get(
     "/episode/:episodeId",
@@ -47,17 +59,33 @@ router.get(
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: character
+ *       - characters: character
  *         in: path
  *         required: true
  *         schema:
- *           type: string
+ *           type: array
  *         description: The unique name of the character
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             characters:
+ *          example: ["Character One", "Character Two"]
  *     responses:
  *       200:
  *         description: Songs retrieved successfully
+ *         content:
+ *         application/json:
+ *          schema:
+ *           type: array
+ *          songs:
+ *            $ref: '#/components/schemas/CharacterSongs'
  *       404:
  *         description: Songs not found
+ *       403:
+ *         description: Not authorized to retrieve these songs
  */
 router.get(
     "/character/:character",
@@ -85,8 +113,16 @@ router.get(
  *     responses:
  *       200:
  *         description: Voice Actors retrieved successfully
+ *        content:
+ *          application/json:
+ *           schema:
+ *            type: array
+ *            voiceActors:
+ *              $ref: '#/components/schemas/VoiceActorSongs'
  *       404:
- *         description: No Voice Actors found for this song.
+ *         description: Song not found
+ *       403:
+ *         description: Not authorized to retrieve this song
  */
 router.get(
     "/voiceActor/:songId",
@@ -117,6 +153,14 @@ router.get(
  *     responses:
  *       200:
  *         description: A list of songs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               songs:
+ *                 $ref: '#/components/schemas/Song'
+ *       403:
+ *         description: Not authorized to retrieve this song
  */
 router.get(
     "/",
@@ -140,9 +184,41 @@ router.get(
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *              - id
+ *              - title
+ *              - composers
+ *              - characters
+ *              - time
+ *              - episodeId
+ *            properties:
+ *              id:
+ *               type: string
+ *               minLength: 3
+ *               maxLength: 50
+ *               example: "001"
+ *              title:
+ *               type: string
+ *               example: "The Title of the Song"
+ *             composers:
+ *              type: array
+ *              example: ["Composer One", "Composer Two"]
+ *             characters:
+ *              type: array
+ *              example: ["Character One", "Character Two"]
+ *             time:
+ *              type: string
+ *              example: "2 min 30 sec"
+ *             episodeId:
+ *              type: string
+ *              example: "111"
  *     responses:
  *       201:
  *         description: Song created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Song'
  *       400:
  *         description: Invalid input data
  *       409:
@@ -168,11 +244,24 @@ router.post(
  *         required: true
  *         schema:
  *           type: string
+ *         description: The unique identifier of the song
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Song'
  *     responses:
  *       200:
  *         description: Song retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Song'
  *       404:
  *         description: Song not found
+ *       403:
+ *         description: Not authorized to retrieve this song
  */
 router.get(
     "/:id",
@@ -189,18 +278,29 @@ router.get(
  *     summary: Update a specific song
  *     tags: [Songs]
  *     parameters:
- *       - name: songId
+ *       - id: songId
  *         in: path
  *         required: true
  *         schema:
  *           type: string
+ *         description: The unique identifier of the song
  *     requestBody:
- *       required: true
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Song'
  *     responses:
- *       200:
+ *         200:
  *         description: Song updated successfully
- *       404:
- *         description: Song not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Song'
+ *         404:
+ *           description: Song not found
+ *         403:
+ *           description: Not authorized to update this song
  */
 router.put(
     "/:id",
@@ -216,17 +316,32 @@ router.put(
  *   delete:
  *     summary: Deletes a specific song
  *     tags: [Songs]
- *     parameters:
- *       - name: songId
+ *    security:
+ *     - bearerAuth: []
+ *    parameters:
+ *       - id: songId
  *         in: path
  *         required: true
  *         schema:
  *           type: string
- *     responses:
- *       200:
- *         description: Song deleted successfully
+ *        description: The unique identifier of the song
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/Song'
+ *    responses:
+ *      200:
+ *        description: Song deleted successfully
+ *       content:
+ *        application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Song'
  *       404:
  *         description: Song not found
+ *       403:
+ *         description: Not authorized to delete this song
  */
 router.delete(
     "/:id",
