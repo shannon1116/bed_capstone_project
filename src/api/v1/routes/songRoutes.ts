@@ -147,6 +147,13 @@ router.get(
  *         schema:
  *           type: string
  *         description: Unique ID of the song
+ *       - name: limit
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Max number of voice actors returned
  *     responses:
  *       200:
  *         description: Voice actors retrieved successfully

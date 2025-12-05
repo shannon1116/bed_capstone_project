@@ -25,6 +25,10 @@ const router: Router = express.Router();
  *     responses:
  *       200:
  *         description: User details retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
  *       400:
  *         description: Invalid user ID
  *       401:

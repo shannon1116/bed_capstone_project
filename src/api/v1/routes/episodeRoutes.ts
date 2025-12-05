@@ -77,6 +77,12 @@ router.post(
  *     security:
  *       - bearerAuth: []
  *     parameters:
+ *       - name: episodeId
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Unique identifier of the episode
  *       - name: limit
  *         in: query
  *         required: false
@@ -85,6 +91,7 @@ router.post(
  *           minimum: 1
  *           maximum: 100
  *           default: 10
+ *         description: Max number of episodes returned
  *     responses:
  *       200:
  *         description: A list of episodes

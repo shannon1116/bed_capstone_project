@@ -71,6 +71,12 @@ router.post(
  *     security:
  *       - bearerAuth: []
  *     parameters:
+ *       - name: voiceActorId
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Unique identifier of the voice actor
  *       - name: limit
  *         in: query
  *         required: false
