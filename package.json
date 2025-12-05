@@ -6,7 +6,9 @@
   "scripts": {
     "start": "ts-node src/server.ts",
     "build": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "make-admin": "ts-node src/api/v1/scripts/setAdminRole.ts",
+    "generate-docs": "ts-node scripts/generate-openapi.ts && npx @redocly/cli build-docs openapi.json --output docs/index.html"
   },
   "repository": {
     "type": "git",
@@ -21,19 +23,29 @@
   },
   "homepage": "https://github.com/shannon1116/bed_capstone_project#readme",
   "devDependencies": {
+    "@redocly/cli": "^2.12.2",
     "@types/express": "^5.0.5",
     "@types/jest": "^30.0.0",
+    "@types/morgan": "^1.9.10",
     "@types/node": "^24.10.1",
     "@types/supertest": "^6.0.3",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "jest": "^30.2.0",
+    "jest-extended": "^7.0.0",
     "supertest": "^7.1.4",
-    "ts-jest": "^29.4.5",
+    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "firebase-admin": "^13.6.0",
+    "helmet": "^8.1.0",
     "joi": "^18.0.1",
-    "morgan": "^1.10.1"
+    "morgan": "^1.10.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   }
 }

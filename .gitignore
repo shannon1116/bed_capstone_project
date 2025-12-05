@@ -4,6 +4,10 @@ dist/
 .vscode/
 
 capstone_project_key.json
+.env
 
 logs/
 *.logs
+
+src/api/v1/scripts/
+*.setAdminRole.ts
