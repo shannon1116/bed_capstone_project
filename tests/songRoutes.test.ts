@@ -1,4 +1,5 @@
 import request from "supertest";
+import { Request, Response, NextFunction } from "express";
 import app from "../src/app";
 import * as songController from "../src/api/v1/controllers/songController";
 import { HTTP_STATUS } from "../src/constants/httpConstants";
@@ -13,6 +14,21 @@ jest.mock("../src/api/v1/controllers/songController", () => ({
     getSongsByCharacter: jest.fn((req, res) => res.status(HTTP_STATUS.OK).send()),
     getVoiceActorsBySong: jest.fn((req, res) => res.status(HTTP_STATUS.OK).send()),
 }));
+
+// Mocking authentication, essentially bypassing the actual authentication process by calling next()
+jest.mock("../src/api/v1/middleware/authenticate", () => {
+    return jest.fn((_req: Request, _res: Response, next: NextFunction) =>
+        next()
+    );
+});
+
+// Mocking authorization, essentially bypassing the actual authentication process by calling next() and passing empty _options
+jest.mock("../src/api/v1/middleware/authorize", () => {
+    return jest.fn(
+        (_mockOptions) => (_req: Request, _res: Response, next: NextFunction) =>
+            next()
+    );
+});
 
 describe("Song Routes", () => {
     afterEach(() => {

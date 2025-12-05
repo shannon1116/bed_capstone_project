@@ -12,18 +12,18 @@ const swaggerOptions: swaggerJsdoc.Options = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "Task Management API Documentation",
+            title: "Back-End Development Capstone Project API Documentation",
             version: "1.0.0",
             description:
-                "This is the API documentation for the Task Management application.",
+                "This is the API documentation for my Back-End Development Capstone Project.",
         },
         servers: [
             {
                 url: serverUrl,
                 description:
                     process.env.NODE_ENV === "production"
-                        ? "Production server"
-                        : "Local server",
+                        ? "Production server for Back-End Development Capstone Project"
+                        : "Local server for Back-End Development Capstone Project",
             },
         ],
         components: {

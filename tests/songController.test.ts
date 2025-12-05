@@ -10,9 +10,16 @@ import {
 } from "../src/api/v1/models/songModel";
 import { sampleSongs as mockSongs } from "../src/data/songs";
 import { sampleVoiceActors as mockVoiceActors } from "../src/data/voiceActors";
-//import { mock } from "node:test";
 
 jest.mock("../src/api/v1/services/songService");
+
+jest.mock('../src/api/v1/repositories/firestoreRepository', () => ({
+    getDocuments: jest.fn(),
+    getDocumentById: jest.fn(),
+    createDocument: jest.fn(),
+    updateDocument: jest.fn(),
+    deleteDocument: jest.fn(),
+}));
 
 describe("Song Controller", () => {
     let mockReq: Partial<Request>;

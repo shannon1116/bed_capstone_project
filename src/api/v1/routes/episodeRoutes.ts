@@ -3,6 +3,9 @@ import { validateRequest } from "../middleware/validate";
 import { episodeSchemas } from "../validations/episodeValidation";
 import * as episodeController from "../controllers/episodeController";
 
+import authenticate from "../middleware/authenticate";
+import isAuthorized from "../middleware/authorize";
+
 const router: Router = express.Router();
 
 // "/api/v1/episodes" prefixes all below routes
@@ -27,28 +30,22 @@ const router: Router = express.Router();
  *               - season
  *               - episode
  *               - director
- *               - writer
+ *               - writers
  *             properties:
  *               id:
  *                 type: string
- *                 minLength: 3
- *                 maxLength: 50
- *                 example: "111"
  *               title:
  *                 type: string
- *                 example: "The Title of the Song"
  *               season:
  *                 type: string
- *                 example: "2"
  *               episode:
  *                 type: string
- *                 example: "4"
  *               director:
  *                 type: string
- *                 example: "Susie Parker"
  *               writers:
  *                 type: array
- *                 example: "Jake Cross, Tory Bell"
+ *                 items:
+ *                   type: string
  *     responses:
  *       201:
  *         description: Episode created successfully
@@ -58,11 +55,15 @@ const router: Router = express.Router();
  *               $ref: '#/components/schemas/Episode'
  *       400:
  *         description: Invalid input data
- *       409:
- *         description: Episode with this name already exists
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  */
 router.post(
     "/",
+    authenticate,
+    isAuthorized({ hasRole: ["user"] }),
     validateRequest(episodeSchemas.create),
     episodeController.createEpisode
 );
@@ -71,11 +72,17 @@ router.post(
  * @openapi
  * /episodes:
  *   get:
- *     summary: Retrieve a list of episodes with optional filtering
+ *     summary: Retrieve a list of episodes
  *     tags: [Episodes]
  *     security:
  *       - bearerAuth: []
  *     parameters:
+ *       - name: episodeId
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Unique identifier of the episode
  *       - name: limit
  *         in: query
  *         required: false
@@ -84,7 +91,7 @@ router.post(
  *           minimum: 1
  *           maximum: 100
  *           default: 10
- *         description: Maximum number of episodes to return
+ *         description: Max number of episodes returned
  *     responses:
  *       200:
  *         description: A list of episodes
@@ -92,36 +99,38 @@ router.post(
  *           application/json:
  *             schema:
  *               type: array
- *               songs:
+ *               items:
  *                 $ref: '#/components/schemas/Episode'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Not authorized
  */
 router.get(
-    "/", 
+    "/",
+    authenticate,
+    isAuthorized({ hasRole: ["admin", "editor", "user"] }),
     validateRequest(episodeSchemas.list), 
     episodeController.getAllEpisodes
 );
 
 /**
  * @openapi
- * /episodes/{episodeId}:
+ * /episodes/{id}:
  *   get:
- *     summary: Get a specific episodes's information
+ *     summary: Get a specific episode
  *     tags: [Episodes]
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - id: episodeId
+ *       - name: id
  *         in: path
  *         required: true
  *         schema:
  *           type: string
- *         description: The unique identifier of the episode
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Episode'
+ *         description: The episode ID
  *     responses:
  *       200:
  *         description: Episode retrieved successfully
@@ -129,32 +138,37 @@ router.get(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Episode'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Not authorized
  *       404:
  *         description: Episode not found
- *       403:
- *         description: Not authorized to retrieve this episode
  */
 router.get(
     "/:id",
+    authenticate,
+    isAuthorized({ hasRole: ["admin", "editor", "user"] }),
     validateRequest(episodeSchemas.getById),
     episodeController.getOneEpisode
 );
 
 /**
  * @openapi
- * /episodes/{episodeId}:
+ * /episodes/{id}:
  *   put:
- *     summary: Update a specific episode's information
+ *     summary: Update a specific episode
  *     tags: [Episodes]
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - id: episodeId
+ *       - name: id
  *         in: path
  *         required: true
  *         schema:
  *           type: string
- *         description: The unique identifier of the episode
  *     requestBody:
  *       required: true
  *       content:
@@ -164,56 +178,53 @@ router.get(
  *     responses:
  *       200:
  *         description: Episode updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Episode'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Not authorized
  *       404:
  *         description: Episode not found
- *       403:
- *         description: Not authorized to update this episode
  */
 router.put(
-    "/:id", 
+    "/:id",
+    authenticate,
+    isAuthorized({ hasRole: ["editor"] }),
     validateRequest(episodeSchemas.update), 
     episodeController.updateEpisode
 );
 
 /**
  * @openapi
- * /episodes/{episodeId}:
+ * /episodes/{id}:
  *   delete:
- *     summary: Deletes a specific episode
+ *     summary: Delete a specific episode
  *     tags: [Episodes]
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - id: episodeId
+ *       - name: id
  *         in: path
  *         required: true
  *         schema:
  *           type: string
- *         description: The unique identifier of the episode
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Episode'
  *     responses:
  *       200:
  *         description: Episode deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Episode'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Not authorized
  *       404:
  *         description: Episode not found
- *       403:
- *         description: Not authorized to delete this episode
  */
 router.delete(
-    "/:id", 
+    "/:id",
+    authenticate,
+    isAuthorized({ hasRole: ["admin"] }),
     validateRequest(episodeSchemas.delete), 
     episodeController.deleteEpisode
 );

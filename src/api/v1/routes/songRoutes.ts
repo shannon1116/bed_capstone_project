@@ -2,119 +2,12 @@ import express, { Router } from "express";
 import { validateRequest } from "../middleware/validate";
 import { songSchemas } from "../validations/songValidation";
 import * as songController from "../controllers/songController";
+import authenticate from "../middleware/authenticate";
+import isAuthorized from "../middleware/authorize";
 
 const router: Router = express.Router();
 
 // "/api/v1/songs" prefixes all below routes
-
-/**
- * @openapi
- * /songs/episode/{episodeId}:
- *   get:
- *     summary: Gets all the songs in an episode
- *     tags: [Songs]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: episodeId
- *         in: path
- *         required: true
- *         schema:
- *           type: string
- *         description: The unique identifier of the episode
- *     responses:
- *       200:
- *         description: Songs retrieved successfully
- *       404:
- *         description: Song not found
- */
-router.get(
-    "/episode/:episodeId", 
-    validateRequest(songSchemas.getByEpisode), 
-    songController.getSongsByEpisode
-);
-
-/**
- * @openapi
- * /songs/character/{character}:
- *   get:
- *     summary: Gets all the songs by character
- *     tags: [Songs]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: character
- *         in: path
- *         required: true
- *         schema:
- *           type: string
- *         description: The unique name of the character
- *     responses:
- *       200:
- *         description: Songs retrieved successfully
- *       404:
- *         description: Songs not found
- */
-router.get(
-    "/character/:character", 
-    validateRequest(songSchemas.getSongsByCharacter), 
-    songController.getSongsByCharacter
-);
-
-/**
- * @openapi
- * /songs/voiceActor/{songId}:
- *   get:
- *     summary: Gets all the voice actors by song
- *     tags: [Songs]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: songId
- *         in: path
- *         required: true
- *         schema:
- *           type: string
- *         description: The unique id of the song
- *     responses:
- *       200:
- *         description: Voice Actors retrieved successfully
- *       404:
- *         description: No Voice Actors found for this song.
- */
-router.get(
-    "/voiceActor/:songId", 
-    validateRequest(songSchemas.getVoiceActorsBySong), 
-    songController.getVoiceActorsBySong
-);
-
-/**
- * @openapi
- * /songs:
- *   get:
- *     summary: Retrieve a list of songs with optional filtering
- *     tags: [Songs]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: limit
- *         in: query
- *         required: false
- *         schema:
- *           type: integer
- *           minimum: 1
- *           maximum: 100
- *           default: 10
- *         description: Maximum number of songs to return
- *     responses:
- *       200:
- *         description: A list of songs
- */
-router.get(
-    "/", 
-    validateRequest(songSchemas.list), 
-    songController.getAllSongs
-);
 
 /**
  * @openapi
@@ -130,78 +23,291 @@ router.get(
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - id
+ *               - title
+ *               - composers
+ *               - characters
+ *               - time
+ *               - episodeId
  *     responses:
  *       201:
  *         description: Song created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Song'
  *       400:
  *         description: Invalid input data
- *       409:
- *         description: Song with this ID already exists
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  */
 router.post(
     "/",
+    authenticate,
+    isAuthorized({ hasRole: ["user"] }),
     validateRequest(songSchemas.create),
     songController.createSong
 );
 
 /**
  * @openapi
- * /songs/{songId}:
+ * /songs/episode/{episodeId}:
  *   get:
- *     summary: Get a specific song
+ *     summary: Gets all songs in an episode
  *     tags: [Songs]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: episodeId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Unique identifier of the episode
+ *     responses:
+ *       200:
+ *         description: Songs retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Song'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Songs not found
+ */
+router.get(
+    "/episode/:episodeId",
+    authenticate,
+    isAuthorized({ hasRole: ["admin", "editor", "user"] }),
+    validateRequest(songSchemas.getByEpisode), 
+    songController.getSongsByEpisode
+);
+
+/**
+ * @openapi
+ * /songs/character/{character}:
+ *   get:
+ *     summary: Gets all songs by character
+ *     tags: [Songs]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: character
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Name of the character
+ *     responses:
+ *       200:
+ *         description: Songs retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Song'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Songs not found
+ */
+router.get(
+    "/character/:character",
+    authenticate,
+    isAuthorized({ hasRole: ["admin", "editor", "user"] }),
+    validateRequest(songSchemas.getSongsByCharacter), 
+    songController.getSongsByCharacter
+);
+
+/**
+ * @openapi
+ * /songs/voiceActor/{songId}:
+ *   get:
+ *     summary: Gets all voice actors for a song
+ *     tags: [Songs]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: songId
  *         in: path
  *         required: true
  *         schema:
  *           type: string
+ *         description: Unique ID of the song
+ *       - name: limit
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Max number of voice actors returned
  *     responses:
  *       200:
- *         description: Song retrieved successfully
+ *         description: Voice actors retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Song'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Song not found
+ */
+router.get(
+    "/voiceActor/:songId",
+    authenticate,
+    isAuthorized({ hasRole: ["admin", "editor", "user"] }),
+    validateRequest(songSchemas.getVoiceActorsBySong), 
+    songController.getVoiceActorsBySong
+);
+
+/**
+ * @openapi
+ * /songs:
+ *   get:
+ *     summary: Retrieve a list of songs
+ *     tags: [Songs]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: limit
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *     responses:
+ *       200:
+ *         description: List of songs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Song'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ */
+router.get(
+    "/",
+    authenticate,
+    isAuthorized({ hasRole: ["admin", "editor", "user"] }),
+    validateRequest(songSchemas.list), 
+    songController.getAllSongs
+);
+
+/**
+ * @openapi
+ * /songs/{id}:
+ *   get:
+ *     summary: Get a specific song
+ *     tags: [Songs]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Song ID
+ *     responses:
+ *       200:
+ *         description: Song retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Song'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  *       404:
  *         description: Song not found
  */
 router.get(
     "/:id",
+    authenticate,
+    isAuthorized({ hasRole: ["admin", "editor", "user"] }),
     validateRequest(songSchemas.getById),
     songController.getOneSong
 );
 
 /**
  * @openapi
- * /songs/{songId}:
+ * /songs/{id}:
  *   put:
- *     summary: Update a specific song
+ *     summary: Update a song
  *     tags: [Songs]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
- *       - name: songId
+ *       - name: id
  *         in: path
  *         required: true
  *         schema:
  *           type: string
  *     requestBody:
  *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Song'
  *     responses:
  *       200:
- *         description: Song updated successfully
+ *         description: Song updated
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  *       404:
  *         description: Song not found
  */
 router.put(
-    "/:id", 
+    "/:id",
+    authenticate,
+    isAuthorized({ hasRole: ["editor"] }),
     validateRequest(songSchemas.update), 
     songController.updateSong
 );
 
 /**
  * @openapi
- * /songs/{songId}:
+ * /songs/{id}:
  *   delete:
- *     summary: Deletes a specific song
+ *     summary: Delete a song
  *     tags: [Songs]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
- *       - name: songId
+ *       - name: id
  *         in: path
  *         required: true
  *         schema:
@@ -209,11 +315,19 @@ router.put(
  *     responses:
  *       200:
  *         description: Song deleted successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  *       404:
  *         description: Song not found
  */
 router.delete(
-    "/:id", 
+    "/:id",
+    authenticate,
+    isAuthorized({ hasRole: ["admin"] }),
     validateRequest(songSchemas.delete), 
     songController.deleteSong
 );
