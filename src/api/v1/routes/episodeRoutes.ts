@@ -55,8 +55,10 @@ const router: Router = express.Router();
  *               $ref: '#/components/schemas/Episode'
  *       400:
  *         description: Invalid input data
- *       409:
- *         description: Episode with this ID already exists
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  */
 router.post(
     "/",
@@ -92,6 +94,10 @@ router.post(
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Episode'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
  *       403:
  *         description: Not authorized
  */
@@ -125,6 +131,12 @@ router.get(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Episode'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Not authorized
  *       404:
  *         description: Episode not found
  */
@@ -159,6 +171,12 @@ router.get(
  *     responses:
  *       200:
  *         description: Episode updated successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Not authorized
  *       404:
  *         description: Episode not found
  */
@@ -187,6 +205,12 @@ router.put(
  *     responses:
  *       200:
  *         description: Episode deleted successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Not authorized
  *       404:
  *         description: Episode not found
  */

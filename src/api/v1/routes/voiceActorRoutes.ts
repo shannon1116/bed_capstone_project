@@ -49,8 +49,10 @@ const router: Router = express.Router();
  *               $ref: '#/components/schemas/VoiceActor'
  *       400:
  *         description: Invalid input data
- *       409:
- *         description: Voice actor with this name already exists
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  */
 router.post(
     "/",
@@ -87,8 +89,12 @@ router.post(
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/VoiceActor'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
  *       403:
- *         description: Not authorized
+ *         description: Forbidden
  */
 router.get(
     "/",
@@ -120,6 +126,12 @@ router.get(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/VoiceActor'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  *       404:
  *         description: Voice actor not found
  */
@@ -154,6 +166,12 @@ router.get(
  *     responses:
  *       200:
  *         description: Voice actor updated
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  *       404:
  *         description: Voice actor not found
  */
@@ -182,6 +200,12 @@ router.put(
  *     responses:
  *       200:
  *         description: Voice actor deleted
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  *       404:
  *         description: Voice actor not found
  */

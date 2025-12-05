@@ -11,6 +11,49 @@ const router: Router = express.Router();
 
 /**
  * @openapi
+ * /songs:
+ *   post:
+ *     summary: Create a new song
+ *     tags: [Songs]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - title
+ *               - composers
+ *               - characters
+ *               - time
+ *               - episodeId
+ *     responses:
+ *       201:
+ *         description: Song created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Song'
+ *       400:
+ *         description: Invalid input data
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ */
+router.post(
+    "/",
+    authenticate,
+    isAuthorized({ hasRole: ["user"] }),
+    validateRequest(songSchemas.create),
+    songController.createSong
+);
+
+/**
+ * @openapi
  * /songs/episode/{episodeId}:
  *   get:
  *     summary: Gets all songs in an episode
@@ -30,7 +73,13 @@ const router: Router = express.Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/EpisodeSongs'
+ *               $ref: '#/components/schemas/Song'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  *       404:
  *         description: Songs not found
  */
@@ -65,7 +114,13 @@ router.get(
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/CharacterSongs'
+ *                 $ref: '#/components/schemas/Song'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  *       404:
  *         description: Songs not found
  */
@@ -100,7 +155,13 @@ router.get(
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/VoiceActorSongs'
+ *                 $ref: '#/components/schemas/Song'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  *       404:
  *         description: Song not found
  */
@@ -136,6 +197,12 @@ router.get(
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Song'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  */
 router.get(
     "/",
@@ -143,45 +210,6 @@ router.get(
     isAuthorized({ hasRole: ["admin", "editor", "user"] }),
     validateRequest(songSchemas.list), 
     songController.getAllSongs
-);
-
-/**
- * @openapi
- * /songs:
- *   post:
- *     summary: Create a new song
- *     tags: [Songs]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - id
- *               - title
- *               - composers
- *               - characters
- *               - time
- *               - episodeId
- *     responses:
- *       201:
- *         description: Song created successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Song'
- *       400:
- *         description: Invalid input data
- */
-router.post(
-    "/",
-    authenticate,
-    isAuthorized({ hasRole: ["user"] }),
-    validateRequest(songSchemas.create),
-    songController.createSong
 );
 
 /**
@@ -206,6 +234,12 @@ router.post(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Song'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  *       404:
  *         description: Song not found
  */
@@ -240,6 +274,12 @@ router.get(
  *     responses:
  *       200:
  *         description: Song updated
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  *       404:
  *         description: Song not found
  */
@@ -267,7 +307,13 @@ router.put(
  *           type: string
  *     responses:
  *       200:
- *         description: Song deleted
+ *         description: Song deleted successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  *       404:
  *         description: Song not found
  */
