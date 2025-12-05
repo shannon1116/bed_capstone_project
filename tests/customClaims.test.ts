@@ -23,7 +23,7 @@ describe("Custom Claims Tests", () => {
 
     beforeEach(() => {
         req = {
-            body: { uid: "user1", roles: { manager: true } },
+            body: { uid: "user1", roles: { editor: true } },
             params: { id: "user1" },
         };
         res = {
@@ -50,7 +50,7 @@ describe("Custom Claims Tests", () => {
         await setCustomClaims(req as Request, res as Response, next);
 
         expect(auth.getUser).toHaveBeenCalledWith("user1");
-        expect(auth.setCustomUserClaims).toHaveBeenCalledWith("user1", { manager: true });
+        expect(auth.setCustomUserClaims).toHaveBeenCalledWith("user1", { editor: true });
 
         expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
         expect(res.json).toHaveBeenCalledWith({
@@ -63,7 +63,7 @@ describe("Custom Claims Tests", () => {
         const mockUserRecord = {
             uid: "user1",
             email: "test@example.com",
-            customClaims: { roles: { manager: true} },
+            customClaims: { roles: { editor: true} },
         };
         (auth.getUser as jest.Mock).mockResolvedValueOnce(mockUserRecord);
         (successResponse as jest.Mock).mockReturnValue({

@@ -23,18 +23,17 @@ const router: express.Router = express.Router();
  *             type: object
  *             required:
  *               - uid
- *               - claims
+ *               - roles
  *             properties:
  *               uid:
  *                 type: string
  *                 description: Unique identifier of the user
  *                 example: "user-uid-123"
- *               claims:
+ *               roles:
  *                 type: object
  *                 description: Custom claims to assign
  *                 example:
- *                   admin: true
- *                   moderator: false
+ *                   role: "admin"
  *     responses:
  *       200:
  *         description: Custom claims set successfully
