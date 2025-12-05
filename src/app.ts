@@ -65,10 +65,10 @@ app.use("/api/v1/users", userRoutes);
 
 // Route Imports END
 
+setupSwagger(app);
+
 // Global error handling middleware (MUST be applied last)
 app.use(errorHandler);
-
-setupSwagger(app);
 
 // export app and server for testing
 export default app;

@@ -31,18 +31,18 @@ const router: Router = express.Router();
  *             properties:
  *               id:
  *                 type: string
- *                 minLength: 1
- *                 maxLength: 50
  *                 example: "11"
  *               voiceActorName:
  *                 type: string
  *                 example: "Tory Beckett"
  *               characters:
  *                 type: array
+ *                 items:
+ *                   type: string
  *                 example: ["Luna", "Patti"]
  *     responses:
  *       201:
- *         description: Voice Actor created successfully
+ *         description: Voice actor created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -64,7 +64,7 @@ router.post(
  * @openapi
  * /voiceActors:
  *   get:
- *     summary: Retrieves a list of voice actors with optional filtering
+ *     summary: Retrieve a list of voice actors
  *     tags: [VoiceActors]
  *     security:
  *       - bearerAuth: []
@@ -77,24 +77,18 @@ router.post(
  *           minimum: 1
  *           maximum: 100
  *           default: 10
- *         description: Maximum number of voice actors to return
- * *     requestBody:
- *          required: true
- *          content:
- *              application/json:
- *                  schema:
- *                    $ref: '#/components/schemas/VoiceActor'
- *       responses:
- *          200:
- *              description: A list of voice actors
- *              content:
- *                application/json:
- *                  schema:
- *                    type: array
- *                    voiceActors:
- *                      $ref: '#/components/schemas/VoiceActor'
- *      403:
- *        description: Not authorized to retrieve this episode
+ *         description: Max number of voice actors returned
+ *     responses:
+ *       200:
+ *         description: List of voice actors
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/VoiceActor'
+ *       403:
+ *         description: Not authorized
  */
 router.get(
     "/",
@@ -106,36 +100,28 @@ router.get(
 
 /**
  * @openapi
- * /voiceActors/{voiceActorId}:
+ * /voiceActors/{id}:
  *   get:
- *     summary: Get a specific voice actor's information
+ *     summary: Get a specific voice actor
  *     tags: [VoiceActors]
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - id: voiceActorId
+ *       - name: id
  *         in: path
  *         required: true
  *         schema:
  *           type: string
- *         description: The unique identifier of the voice actor
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/VoiceActor'
+ *         description: Voice actor ID
  *     responses:
  *       200:
- *         description: Voice Actor retrieved successfully
+ *         description: Voice actor retrieved
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/VoiceActor'
  *       404:
  *         description: Voice actor not found
- *       403:
- *         description: Not authorized to retrieve this voice actor
  */
 router.get(
     "/:id",
@@ -147,19 +133,18 @@ router.get(
 
 /**
  * @openapi
- * /voiceActors/{voiceActorId}:
+ * /voiceActors/{id}:
  *   put:
- *     summary: Update a specific voice actor's information
+ *     summary: Update an existing voice actor
  *     tags: [VoiceActors]
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - id: voiceActorId
+ *       - name: id
  *         in: path
  *         required: true
  *         schema:
  *           type: string
- *         description: The unique identifier of the voice actor
  *     requestBody:
  *       required: true
  *       content:
@@ -168,15 +153,9 @@ router.get(
  *             $ref: '#/components/schemas/VoiceActor'
  *     responses:
  *       200:
- *         description: Voice Actor updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/VoiceActor'
+ *         description: Voice actor updated
  *       404:
  *         description: Voice actor not found
- *       403:
- *         description: Not authorized to update this voice actor
  */
 router.put(
     "/:id",
@@ -188,36 +167,23 @@ router.put(
 
 /**
  * @openapi
- * /voiceActors/{voiceActorId}:
+ * /voiceActors/{id}:
  *   delete:
- *     summary: Deletes a specific voice actor
+ *     summary: Delete a voice actor
  *     tags: [VoiceActors]
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - id: voiceActorId
+ *       - name: id
  *         in: path
  *         required: true
  *         schema:
  *           type: string
- *         description: The unique identifier of the voice actor
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/VoiceActor'
  *     responses:
  *       200:
- *         description: Voice Actor deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/VoiceActor'
+ *         description: Voice actor deleted
  *       404:
  *         description: Voice actor not found
- *       403:
- *         description: Not authorized to delete this voice actor
  */
 router.delete(
     "/:id",
