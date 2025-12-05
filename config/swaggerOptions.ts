@@ -15,7 +15,7 @@ const swaggerOptions: swaggerJsdoc.Options = {
             title: "Back-End Development Capstone Project API Documentation",
             version: "1.0.0",
             description:
-                "This is the API documentation for the Back-End Development Capstone Project.",
+                "This is the API documentation for my Back-End Development Capstone Project.",
         },
         servers: [
             {

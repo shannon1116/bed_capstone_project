@@ -4,7 +4,6 @@ import * as voiceActorController from "../src/api/v1/controllers/voiceActorContr
 import * as voiceActorService from "../src/api/v1/services/voiceActorService";
 import { VoiceActor } from "../src/api/v1/models/voiceActorModel";
 import { sampleVoiceActors as mockVoiceActors } from "../src/data/voiceActors";
-// import { mock } from "node:test";
 
 jest.mock("../src/api/v1/services/voiceActorService");
 

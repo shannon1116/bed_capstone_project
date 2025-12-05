@@ -4,7 +4,6 @@ import * as episodeController from "../src/api/v1/controllers/episodeController"
 import * as episodeService from "../src/api/v1/services/episodeService";
 import { Episode } from "../src/api/v1/models/episodeModel";
 import { sampleEpisodes as mockEpisodes } from "../src/data/episodes";
-//import { mock } from "node:test";
 
 jest.mock("../src/api/v1/services/episodeService");
 
